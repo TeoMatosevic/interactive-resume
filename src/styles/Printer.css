@@ -1,0 +1,12 @@
+.input-container {
+    display: block;
+    white-space: pre-wrap;
+}
+
+.text-shadow-green {
+    text-shadow: 1px 1px 1px #42e66c;
+}
+
+.text-shadow {
+    text-shadow: 1px 1px 2px black, 0 0 1em #42e66c, 0 0 0.2em #42e66c;
+}
