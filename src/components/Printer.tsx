@@ -1,63 +1,31 @@
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 import { PrinterOptions, Color } from "../models"
 import "../styles/Printer.css"
+import { useQuery, usePrinter } from "../hooks"
 
 interface PrinterProps {
     refresh: number
 }
 
 const Printer: React.FC<PrinterProps> = ({ refresh }) => {
-    // const [printedBlocksCounter, setPrintedBlocksCounter] = useState(0)
-    // const [unprintedBlocksCounter, setUnprintedBlocksCounter] = useState(0)
-    const [options, setOptions] = useState<PrinterOptions[][]>([
-        [
-            {
-                color: Color.GREEN,
-                text: "guest@teo",
-            },
-            {
-                color: Color.WHITE,
-                text: ":",
-            },
-            {
-                color: Color.PURPLE,
-                text: "~",
-            },
-            {
-                color: Color.WHITE,
-                text: "$ ",
-            },
-        ],
-    ])
+    const { printUser, printQuery, printStartUp } = usePrinter()
+    const [options, setOptions] = useState<PrinterOptions[][]>(printStartUp)
     const inputRef = useRef<HTMLDivElement>(null)
-
-    const query = (input: string) => {}
+    const { query } = useQuery()
 
     const handleSubmit = (e: React.KeyboardEvent<HTMLDivElement>, ref: React.RefObject<HTMLDivElement>) => {
         e.preventDefault()
         const input = ref.current?.innerText
         if (input) {
             const newOptions = [...options]
-            newOptions[options.length - 1].push({ color: Color.WHITE, text: input })
-            newOptions[options.length - 1].push({ color: Color.WHITE, text: "\n" })
-            newOptions.push([
-                {
-                    color: Color.GREEN,
-                    text: "guest@teo",
-                },
-                {
-                    color: Color.WHITE,
-                    text: ":",
-                },
-                {
-                    color: Color.PURPLE,
-                    text: "~",
-                },
-                {
-                    color: Color.WHITE,
-                    text: "$ ",
-                },
-            ])
+            const queryOptions = printQuery(input)
+            queryOptions.forEach((opt) => {
+                newOptions[options.length - 1].push(opt)
+            })
+            const queryResult = query(input)
+            newOptions.push(queryResult)
+            const userOptions = printUser()
+            newOptions.push(userOptions)
             setOptions(newOptions)
             ref.current.innerText = ""
         }
@@ -109,8 +77,14 @@ const Printer: React.FC<PrinterProps> = ({ refresh }) => {
 }
 
 const print = (opt: PrinterOptions) => {
-    const textColor = opt.color == Color.PURPLE ? "purple" : opt.color == Color.GREEN ? "green" : "text"
-    return <span className={`font-ubuntu-mono font-bold text-terminal-size text-terminal-${textColor}`}>{opt.text}</span>
+    const textColor: string =
+        opt.color === Color.WHITE ? "text-terminal-text" : opt.color === Color.GREEN ? "text-terminal-green" : "text-terminal-purple"
+    const additionalClassName = opt.className ? opt.className : ""
+    return (
+        <span className={`font-ubuntu-mono whitespace-pre-wrap font-bold text-terminal-size ${textColor} ${additionalClassName}`}>
+            {opt.text}
+        </span>
+    )
 }
 
 export default Printer
