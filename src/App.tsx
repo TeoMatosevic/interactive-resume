@@ -1,4 +1,4 @@
-import { Printer } from "./components"
+import { Terminal } from "./components"
 import { useState } from "react"
 
 const App = () => {
@@ -11,7 +11,7 @@ const App = () => {
     return (
         <div className="h-full w-full">
             <div onClick={incrementCounter} className="p-2 bg-background h-full w-full">
-                <Printer refresh={counter} />
+                <Terminal refresh={counter} />
             </div>
         </div>
     )

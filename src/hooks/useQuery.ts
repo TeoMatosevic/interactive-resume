@@ -1,9 +1,9 @@
-import { PrinterOptions } from "../models"
+import { Block } from "../models"
 import { usePrinter } from "."
 
 const useQuery = () => {
     const { printHelpCommand, printCommandNotFound } = usePrinter()
-    const query = (query: string): PrinterOptions[] => {
+    const query = (query: string): Block => {
         if (query === "help") {
             return printHelpCommand()
         } else {

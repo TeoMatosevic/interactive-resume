@@ -1,3 +1,3 @@
-import Printer from "./Printer"
+import Terminal from "./Terminal"
 
-export { Printer }
+export { Terminal }

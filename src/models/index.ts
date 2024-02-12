@@ -1,7 +1,5 @@
-import Color from "./Color";
-import PrinterOptions from "./PrinterOptions";
+import Color from "./Color"
+import PrinterOptions from "./PrinterOptions"
+import Block from "./Block"
 
-export {
-    Color,
-    type PrinterOptions,
-}
+export { Color, type PrinterOptions, type Block }
