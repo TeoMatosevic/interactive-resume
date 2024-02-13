@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react"
 import { Block, PrinterOptions } from "../models"
 
-const TIME_DIFF = 100
-const TIME_EXTRA_DIVIDER = 40
+const TIME_DIFF = 50
 
 const usePrintOptions = (blocks: Block[], setLoading: (loading: boolean) => void) => {
     const [lines, setLines] = useState<PrinterOptions[][]>([])
@@ -15,34 +14,25 @@ const usePrintOptions = (blocks: Block[], setLoading: (loading: boolean) => void
         const syncLines = syncBlocks.map((block) => block.options)
 
         setLines(syncLines)
-        let delay = 0
-        let nextDelay = 0
-        asyncBlocks.forEach((block, index) => {
-            delay = nextDelay
-            nextDelay += block.options.length * TIME_DIFF + (block.options.length * TIME_DIFF) / TIME_EXTRA_DIVIDER
-            setTimeout(() => {
-                let currentIndex = 0
-                const interval = setInterval(() => {
-                    if (currentIndex < block.options.length) {
-                        setLines((prev) => {
-                            const newLines = [...prev]
-                            if (currentIndex === 0) {
-                                newLines.push([block.options[currentIndex]])
-                            } else {
-                                newLines[prev.length - 1].push(block.options[currentIndex])
-                            }
-                            currentIndex++
-                            return newLines
-                        })
+        const flatAsyncOptions = asyncBlocks.flatMap((block) => block.options)
+        let currentIndex = 0
+        const interval = setInterval(() => {
+            if (currentIndex < flatAsyncOptions.length) {
+                setLines((prev) => {
+                    const newLines = [...prev]
+                    if (currentIndex === 0) {
+                        newLines.push([flatAsyncOptions[currentIndex]])
                     } else {
-                        clearInterval(interval)
-                        if (index === asyncBlocks.length - 1) {
-                            setLoading(false)
-                        }
+                        newLines[prev.length - 1].push(flatAsyncOptions[currentIndex])
                     }
-                }, TIME_DIFF)
-            }, delay)
-        })
+                    currentIndex++
+                    return newLines
+                })
+            } else {
+                clearInterval(interval)
+                setLoading(false)
+            }
+        }, TIME_DIFF)
     }, [blocks])
 
     return lines

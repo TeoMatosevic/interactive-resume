@@ -14,6 +14,7 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     const { push, up, down, history, index } = useHistory()
     const [loading, setLoading] = useState<boolean>(false)
     const inputRef = useRef<HTMLDivElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null)
     const lines = usePrintOptions(options, setLoading)
 
     const handleSubmit = (e: React.KeyboardEvent<HTMLDivElement>, ref: React.RefObject<HTMLDivElement>) => {
@@ -21,22 +22,26 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
         const input = ref.current?.innerText
         if (input) {
             push(input)
-            const newOptions = [...options]
-            const queryOptions = printQuery(input)
-            const queryResult = query(input)
-            const userOptions = printUser()
-            queryOptions.options.forEach((opt) => {
-                newOptions[options.length - 1].options.push(opt)
-            })
-            newOptions.push(queryResult)
-            newOptions.push(userOptions)
+            let newOptions = [...options]
+            if (input === "clear") {
+                newOptions = [printUser()]
+            } else {
+                const queryOptions = printQuery(input)
+                const queryResult = query(input, history)
+                const userOptions = printUser()
+                queryOptions.options.forEach((opt) => {
+                    newOptions[options.length - 1].options.push(opt)
+                })
+                newOptions.push(queryResult)
+                newOptions.push(userOptions)
+            }
             setOptions(newOptions)
             ref.current.innerText = ""
         }
     }
 
     const printBlock = (block: PrinterOptions[], index: number) => {
-        if (index === options.length - 1) {
+        if (index === lines.length - 1) {
             return (
                 <div className="input-container w-full">
                     {block.map((opt, index) => {
@@ -62,7 +67,7 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                             id="input"
                             ref={inputRef}
                             spellCheck="false"
-                            className="font-ubuntu-mono inline font-bold text-terminal-size text-terminal-text outline-none"
+                            className="font-ubuntu-mono inline text-terminal-size text-terminal-white outline-none"
                             contentEditable></div>
                     ) : null}
                 </div>
@@ -102,24 +107,73 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
         }
     }, [loading])
 
+    const scrollToBottom = () => {
+        const lastChild = containerRef.current?.lastElementChild
+        if (lastChild) {
+            lastChild.scrollIntoView()
+        }
+    }
+
+    useEffect(() => {
+        scrollToBottom()
+    }, [lines, loading])
+
     return (
-        <>
+        <div ref={containerRef}>
             {lines.map((opt, index) => {
                 return <div key={index}>{printBlock(opt, index)}</div>
             })}
-        </>
+        </div>
     )
 }
 
 const print = (opt: PrinterOptions) => {
-    const textColor: string =
-        opt.color === Color.WHITE ? "text-terminal-text" : opt.color === Color.GREEN ? "text-terminal-green" : "text-terminal-purple"
+    const textColor: string = getColor(opt.color)
     const additionalClassName = opt.className ? opt.className : ""
-    return (
-        <span className={`font-ubuntu-mono whitespace-pre-wrap font-bold text-terminal-size ${textColor} ${additionalClassName}`}>
-            {opt.text}
-        </span>
-    )
+    return <span className={`font-ubuntu-mono whitespace-pre-wrap text-terminal-size ${textColor} ${additionalClassName}`}>{opt.text}</span>
+}
+
+const getColor = (color: Color) => {
+    switch (color) {
+        case Color.GRAY:
+            return "text-terminal-gray"
+        case Color.GRAY_LIGHT:
+            return "text-terminal-gray-light"
+        case Color.PINK:
+            return "text-terminal-pink"
+        case Color.PINK_LIGHT:
+            return "text-terminal-pink-light"
+        case Color.WHITE:
+            return "text-terminal-white"
+        case Color.GREEN:
+            return "text-terminal-green"
+        case Color.GREEN_LIGHT:
+            return "text-terminal-green-light"
+        case Color.PURPLE:
+            return "text-terminal-purple"
+        case Color.PURPLE_LIGHT:
+            return "text-terminal-purple-light"
+        case Color.PURPLE_DARK:
+            return "text-terminal-purple-dark"
+        case Color.YELLOW:
+            return "text-terminal-yellow"
+        case Color.YELLOW_LIGHT:
+            return "text-terminal-yellow-light"
+        case Color.RED:
+            return "text-terminal-red"
+        case Color.RED_LIGHT:
+            return "text-terminal-red-light"
+        case Color.BLUE:
+            return "text-terminal-blue"
+        case Color.BLUE_LIGHT:
+            return "text-terminal-blue-light"
+        case Color.BROWN:
+            return "text-terminal-brown"
+        case Color.BROWN_LIGHT:
+            return "text-terminal-brown-light"
+        default:
+            return "text-terminal-white"
+    }
 }
 
 export default Terminal
