@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { PrinterOptions, Color, Block } from "../models"
 import "../styles/Printer.css"
-import { useQuery, usePrinter, usePrintOptions } from "../hooks"
+import { useQuery, usePrinter, usePrintOptions, useHistory } from "../hooks"
 
 interface PrinterProps {
     refresh: number
@@ -11,8 +11,7 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     const { printUser, printQuery, printStartUp } = usePrinter()
     const { query } = useQuery()
     const [options, setOptions] = useState<Block[]>(printStartUp)
-    const [history, setHistory] = useState<string[]>([""])
-    const [index, setIndex] = useState<number>(0)
+    const { push, up, down, history, index } = useHistory()
     const [loading, setLoading] = useState<boolean>(false)
     const inputRef = useRef<HTMLDivElement>(null)
     const lines = usePrintOptions(options, setLoading)
@@ -98,31 +97,10 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     }, [options, inputRef.current, refresh])
 
     useEffect(() => {
-        setIndex(history.length - 1)
-    }, [history])
-
-    useEffect(() => {
         if (loading === false) {
             inputRef.current?.focus()
         }
     }, [loading])
-
-    const push = (input: string) => {
-        const historyCopy = history.slice(0, -1)
-        setHistory([...historyCopy, input, ""])
-    }
-
-    const up = () => {
-        if (index > 0) {
-            setIndex((prev) => prev - 1)
-        }
-    }
-
-    const down = () => {
-        if (index < history.length - 1) {
-            setIndex((prev) => prev + 1)
-        }
-    }
 
     return (
         <>
