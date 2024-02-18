@@ -1,16 +1,15 @@
 import { useState, useEffect, useRef } from "react"
 import { PrinterOptions, Color, Block } from "../models"
 import "../styles/Printer.css"
-import { useQuery, usePrinter, usePrintOptions, useHistory } from "../hooks"
+import { usePrintOptions, useHistory, useFileSystem } from "../hooks"
 
 interface PrinterProps {
     refresh: number
 }
 
 const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
-    const { printUser, printQuery, printStartUp } = usePrinter()
-    const { query } = useQuery()
-    const [options, setOptions] = useState<Block[]>(printStartUp)
+    const { query, printCommandPrompt, printInit, printQuery } = useFileSystem()
+    const [options, setOptions] = useState<Block[]>(printInit)
     const { push, up, down, history, index } = useHistory()
     const [loading, setLoading] = useState<boolean>(false)
     const inputRef = useRef<HTMLDivElement>(null)
@@ -24,16 +23,16 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
             push(input)
             let newOptions = [...options]
             if (input === "clear") {
-                newOptions = [printUser()]
+                newOptions = [printCommandPrompt()]
             } else {
                 const queryOptions = printQuery(input)
                 const queryResult = query(input, history)
-                const userOptions = printUser()
                 queryOptions.options.forEach((opt) => {
                     newOptions[options.length - 1].options.push(opt)
                 })
-                newOptions.push(queryResult)
-                newOptions.push(userOptions)
+                queryResult.forEach((opt) => {
+                    newOptions.push(opt)
+                })
             }
             setOptions(newOptions)
             ref.current.innerText = ""

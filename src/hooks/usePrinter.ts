@@ -1,7 +1,7 @@
-import { Color, Block } from "../models"
+import { Color, Block, ListNode, NodeType } from "../models"
 
 const usePrinter = () => {
-    const printUser = (): Block => {
+    const printPrompt = (currPath?: string): Block => {
         const block: Block = {
             options: [
                 {
@@ -16,13 +16,12 @@ const usePrinter = () => {
                 },
                 {
                     color: Color.PURPLE,
-                    text: "~",
+                    text: currPath ? `~/${currPath}` : "~",
                     className: "font-bold",
                 },
                 {
                     color: Color.WHITE,
                     text: "$ ",
-                    className: "font-bold",
                 },
             ],
             async: false,
@@ -44,7 +43,7 @@ const usePrinter = () => {
         return block
     }
 
-    const printStartUp = (): Block[] => {
+    const printStartUp = (currPath: string): Block[] => {
         const blocks: Block[] = [
             {
                 options: [
@@ -167,37 +166,13 @@ const usePrinter = () => {
                 ],
                 async: false,
             },
-            {
-                options: [
-                    {
-                        color: Color.GREEN,
-                        text: "guest@teo",
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: ":",
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.PURPLE,
-                        text: "~",
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: "$ ",
-                        className: "font-bold",
-                    },
-                ],
-                async: false,
-            },
+            printPrompt(currPath),
         ]
 
         return blocks
     }
 
-    const printHelpCommand = (): Block => {
+    const printHelpCommand = (currPath: string): Block[] => {
         const block: Block = {
             options: [
                 {
@@ -207,11 +182,11 @@ const usePrinter = () => {
                     className: "font-bold text-shadow-purple",
                 },
                 {
-                    color: Color.YELLOW_LIGHT,
-                    text: ` - nothing to explain here`,
+                    color: Color.WHITE,
+                    text: `       - you already know what this does`,
                 },
                 {
-                    color: Color.YELLOW,
+                    color: Color.YELLOW_LIGHT,
                     text: ` (`,
                     className: "font-bold text-shadow-yellow",
                 },
@@ -221,7 +196,7 @@ const usePrinter = () => {
                     className: "font-bold text-shadow-blue",
                 },
                 {
-                    color: Color.YELLOW,
+                    color: Color.YELLOW_LIGHT,
                     text: `╭`,
                     className: "font-bold text-shadow-yellow",
                 },
@@ -231,7 +206,7 @@ const usePrinter = () => {
                     className: "font-bold text-shadow-blue",
                 },
                 {
-                    color: Color.YELLOW,
+                    color: Color.YELLOW_LIGHT,
                     text: `)\n`,
                     className: "font-bold text-shadow-yellow",
                 },
@@ -242,16 +217,16 @@ const usePrinter = () => {
                     className: "font-bold text-shadow-purple",
                 },
                 {
-                    color: Color.YELLOW,
-                    text: ` - who `,
+                    color: Color.WHITE,
+                    text: `     - who `,
                 },
                 {
-                    color: Color.YELLOW,
+                    color: Color.WHITE,
                     text: `are`,
                     className: "font-bold text-shadow-yellow",
                 },
                 {
-                    color: Color.YELLOW,
+                    color: Color.WHITE,
                     text: ` you\n`,
                 },
                 {
@@ -261,16 +236,16 @@ const usePrinter = () => {
                     className: "font-bold text-shadow-purple",
                 },
                 {
-                    color: Color.YELLOW,
-                    text: ` - who `,
+                    color: Color.WHITE,
+                    text: `      - who `,
                 },
                 {
-                    color: Color.YELLOW,
+                    color: Color.WHITE,
                     text: `is`,
                     className: "font-bold text-shadow-yellow",
                 },
                 {
-                    color: Color.YELLOW,
+                    color: Color.WHITE,
                     text: ` Teo Matošević\n`,
                 },
                 {
@@ -280,8 +255,8 @@ const usePrinter = () => {
                     className: "font-bold text-shadow-purple",
                 },
                 {
-                    color: Color.YELLOW,
-                    text: ` - clear the terminal\n`,
+                    color: Color.WHITE,
+                    text: `      - clear the terminal\n`,
                 },
                 {
                     color: Color.PURPLE,
@@ -290,8 +265,55 @@ const usePrinter = () => {
                     className: "font-bold text-shadow-purple",
                 },
                 {
-                    color: Color.YELLOW,
-                    text: ` - show command history\n`,
+                    color: Color.WHITE,
+                    text: `    - show command history\n`,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
+    'cd'`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `         - change directory (available directories can be listed with `,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "'ls'",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: " command), for example ",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "'cd Projects'",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: ",\n",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `                   directories are `,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "purple\n",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
+    'ls'`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `         - list directory contents\n`,
                 },
                 {
                     color: Color.WHITE,
@@ -300,10 +322,10 @@ const usePrinter = () => {
             ],
             async: true,
         }
-        return block
+        return [block, printPrompt(currPath)]
     }
 
-    const printCommandNotFound = (query: string): Block => {
+    const printCommandNotFound = (query: string, currPath: string): Block[] => {
         const block: Block = {
             options: [
                 {
@@ -335,10 +357,10 @@ const usePrinter = () => {
             ],
             async: true,
         }
-        return block
+        return [block, printPrompt(currPath)]
     }
 
-    const printWhoAmICommand = (): Block => {
+    const printWhoAmICommand = (currPath: string): Block[] => {
         const block: Block = {
             options: [
                 {
@@ -348,10 +370,10 @@ const usePrinter = () => {
             ],
             async: true,
         }
-        return block
+        return [block, printPrompt(currPath)]
     }
 
-    const printWhoIsCommand = (): Block => {
+    const printWhoIsCommand = (currPath: string): Block[] => {
         const block: Block = {
             options: [
                 {
@@ -361,10 +383,10 @@ const usePrinter = () => {
             ],
             async: true,
         }
-        return block
+        return [block, printPrompt(currPath)]
     }
 
-    const printHistoryCommand = (history: string[]): Block => {
+    const printHistoryCommand = (history: string[], currPath: string): Block[] => {
         const maxDigits = history.length.toString().length
         const block: Block = {
             options: history
@@ -382,11 +404,81 @@ const usePrinter = () => {
             color: Color.WHITE,
             text: ` ${lastIndex + 1}  history\n`,
         })
-        return block
+        return [block, printPrompt(currPath)]
+    }
+
+    const printLsCommand = (contents: ListNode[], currPath: string) => {
+        const block: Block = {
+            options: contents.map((node) => {
+                return {
+                    color: node.type === NodeType.File ? Color.WHITE : Color.PURPLE,
+                    text: `${node.name} `,
+                    className: node.type === NodeType.File ? "" : "font-bold",
+                }
+            }),
+            async: true,
+        }
+        block.options.push({
+            color: Color.WHITE,
+            text: "\n",
+        })
+        return [block, printPrompt(currPath)]
+    }
+
+    const printCdFail = (message: string, currPath: string): Block[] => {
+        const block: Block = {
+            options: [
+                {
+                    color: Color.RED,
+                    text: message + "\n",
+                },
+            ],
+            async: true,
+        }
+        return [block, printPrompt(currPath)]
+    }
+
+    const printCdSuccess = (currPath: string): Block[] => {
+        const block: Block = {
+            options: [
+                {
+                    color: Color.WHITE,
+                    text: `\n`,
+                },
+            ],
+            async: true,
+        }
+        return [block, printPrompt(currPath)]
+    }
+
+    const printCatCommand = (contents: string, currPath: string): Block[] => {
+        const block: Block = {
+            options: contents.split("\n").map((line) => {
+                return {
+                    color: Color.WHITE,
+                    text: line + "\n",
+                }
+            }),
+            async: true,
+        }
+        return [block, printPrompt(currPath)]
+    }
+
+    const printCatFail = (message: string, currPath: string): Block[] => {
+        const block: Block = {
+            options: [
+                {
+                    color: Color.RED,
+                    text: message + "\n",
+                },
+            ],
+            async: true,
+        }
+        return [block, printPrompt(currPath)]
     }
 
     return {
-        printUser,
+        printPrompt,
         printQuery,
         printStartUp,
         printHelpCommand,
@@ -394,6 +486,11 @@ const usePrinter = () => {
         printWhoAmICommand,
         printWhoIsCommand,
         printHistoryCommand,
+        printCdFail,
+        printCdSuccess,
+        printLsCommand,
+        printCatCommand,
+        printCatFail,
     }
 }
 
