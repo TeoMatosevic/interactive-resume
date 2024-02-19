@@ -13,6 +13,7 @@ interface ChangeDirectoryStatus {
     success: boolean
     message: string
     path?: string
+    node?: Node
 }
 
 const useFileSystem = () => {
@@ -90,16 +91,21 @@ I hope you like it!`,
         }
     }
 
-    const findParent = (node: Node): Node | undefined => {
-        if (node.children.length === 0) {
-            return
-        }
-        for (const child of fileSystem.children) {
-            if (child.children.includes(node)) {
-                return child
+    const findParentRecursively = (node: Node, child: Node): Node | undefined => {
+        if (node.children.includes(child)) {
+            return node
+        } else {
+            for (const n of node.children) {
+                const found = findParentRecursively(n, child)
+                if (found) {
+                    return found
+                }
             }
-            return findParent(child)
         }
+    }
+
+    const findParent = (node: Node): Node | undefined => {
+        return findParentRecursively(fileSystem, node)
     }
 
     const getPath = (currNode: Node): string => {
@@ -113,27 +119,46 @@ I hope you like it!`,
         return path.replace("guest", "")
     }
 
-    const changeDirectory = (name: string): ChangeDirectoryStatus => {
+    const cd = (name: string): ChangeDirectoryStatus => {
+        const paths = name.split("/")
+        let currNode = currentNode
+        for (const path of paths) {
+            const status = changeDirectory(path, currNode)
+            if (!status.success) {
+                return status
+            }
+            currNode = status.node!
+        }
+        setCurrentNode(currNode)
+        return {
+            success: true,
+            message: "",
+            path: getPath(currNode),
+        }
+    }
+
+    const changeDirectory = (name: string, currNode: Node): ChangeDirectoryStatus => {
         if (name === ".") {
             return {
                 success: true,
                 message: "",
-                path: getPath(currentNode),
+                path: getPath(currNode),
+                node: currNode,
             }
         } else if (name === "..") {
-            if (currentNode.name === "guest") {
+            if (currNode.name === "guest") {
                 return {
                     success: false,
                     message: "tmatosevic: cd: permission denied: guest",
                 }
             }
-            const parent = findParent(currentNode)
+            const parent = findParent(currNode)
             if (parent) {
-                setCurrentNode(parent)
                 return {
                     success: true,
                     message: "",
                     path: getPath(parent),
+                    node: parent,
                 }
             }
             return {
@@ -146,13 +171,13 @@ I hope you like it!`,
                 message: "tmatosevic: cd: permission denied: guest",
             }
         }
-        const node = findNode(currentNode, name)
+        const node = findNode(currNode, name)
         if (node) {
-            setCurrentNode(node)
             return {
                 success: true,
                 message: "",
                 path: getPath(node),
+                node: node,
             }
         } else {
             return {
@@ -182,7 +207,7 @@ I hope you like it!`,
             return printHistoryCommand(history, getPath(currentNode))
         } else if (query.split(" ")[0] === "cd") {
             const name = query.split(" ")[1]
-            const status = changeDirectory(name)
+            const status = cd(name)
             if (status.success) {
                 return printCdSuccess(status.path!)
             } else {
@@ -221,7 +246,7 @@ I hope you like it!`,
         }
     }
 
-    return { changeDirectory, query, printCommandPrompt, printQuery, printInit, list, printFile }
+    return { query, printCommandPrompt, printQuery, printInit }
 }
 
 export default useFileSystem

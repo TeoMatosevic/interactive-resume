@@ -6,7 +6,7 @@ const usePrinter = () => {
             options: [
                 {
                     color: Color.GREEN,
-                    text: "guest@teo",
+                    text: "guest@tmatosevic",
                     className: "font-bold",
                 },
                 {
@@ -316,6 +316,43 @@ const usePrinter = () => {
                     text: `         - list directory contents\n`,
                 },
                 {
+                    color: Color.PURPLE,
+                    text: `\
+    'cat'`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `        - prints file contents (available files can be listed with `,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "'ls'",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: " command), for example ",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "'cat about.txt'",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: ",\n",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `                   files are `,
+                },
+                {
+                    color: Color.WHITE,
+                    text: "white\n",
+                    className: "font-bold",
+                },
+                {
                     color: Color.WHITE,
                     text: `\n`,
                 },
@@ -418,10 +455,12 @@ const usePrinter = () => {
             }),
             async: true,
         }
-        block.options.push({
-            color: Color.WHITE,
-            text: "\n",
-        })
+        if (block.options.length > 0) {
+            block.options.push({
+                color: Color.WHITE,
+                text: "\n",
+            })
+        }
         return [block, printPrompt(currPath)]
     }
 
@@ -443,7 +482,7 @@ const usePrinter = () => {
             options: [
                 {
                     color: Color.WHITE,
-                    text: `\n`,
+                    text: ``,
                 },
             ],
             async: true,
