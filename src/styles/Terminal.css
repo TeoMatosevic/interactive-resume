@@ -1,0 +1,47 @@
+.input-container {
+    display: block;
+    white-space: pre-wrap;
+}
+
+.text-shadow-green {
+    text-shadow: 1px 1px 2px black, 0 0 1em #42e66c, 0 0 0.2em #42e66c;
+}
+
+.text-shadow-purple {
+    text-shadow: 1px 1px 2px black, 0 0 1em #9b6bdf, 0 0 0.2em #9b6bdf;
+}
+
+.text-shadow-white {
+    text-shadow: 1px 1px 2px black, 0 0 1em #d0cfcc, 0 0 0.2em #d0cfcc;
+}
+
+.text-shadow-yellow {
+    text-shadow: 1px 1px 2px black, 0 0 1em #f7e018, 0 0 0.2em #e4f34a;
+}
+
+.text-shadow-blue {
+    text-shadow: 1px 1px 2px black, 0 0 1em #4a90e2, 0 0 0.2em #75d7ec;
+}
+
+.cursor {
+    width: 2px;
+    height: 20px;
+    background-color: red;
+    animation: blink 1s step-end infinite;
+}
+
+.blink {
+    animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+    25% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0;
+    }
+    75% {
+        opacity: 0.5;
+    }
+}

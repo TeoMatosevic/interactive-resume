@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { PrinterOptions, Block } from "../models"
-import "../styles/Printer.css"
+import "../styles/Terminal.css"
 import { usePrintOptions, useHistory, useFileSystem } from "../hooks"
 import { getColor } from "../helpers/colors"
 
@@ -8,18 +8,41 @@ interface PrinterProps {
     refresh: number
 }
 
+const getWindowHeight = () => {
+    return window.innerHeight
+}
+
+const findLastSpaceFromIndex = (input: string, index: number): number => {
+    for (let i = index; i < input.length; i++) {
+        if (input[i] !== " ") {
+            return i - 1
+        }
+    }
+    if (input[index] === " ") {
+        return input.length - 1
+    } else {
+        return index
+    }
+}
+
 const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     const { query, printCommandPrompt, printInit, printQuery } = useFileSystem()
     const [options, setOptions] = useState<Block[]>(printInit)
     const { push, up, down, history, index } = useHistory()
     const [loading, setLoading] = useState<boolean>(false)
-    const inputRef = useRef<HTMLDivElement>(null)
+    const [inputText, setInputText] = useState("")
+    const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
+    const [windowHeight, setWindowHeight] = useState(getWindowHeight())
+    const [showCursor, setShowCursor] = useState<boolean>(true)
+    const [cursorOffset, setCursorOffset] = useState<number>(0)
+    const inputRef = useRef<HTMLTextAreaElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
+    const ref = useRef<HTMLSpanElement>(null)
     const lines = usePrintOptions(options, setLoading)
 
-    const handleSubmit = (e: React.KeyboardEvent<HTMLDivElement>, ref: React.RefObject<HTMLDivElement>) => {
+    const handleSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>, ref: React.RefObject<HTMLTextAreaElement>) => {
         e.preventDefault()
-        const input = ref.current?.innerText
+        const input = ref.current?.value
         if (input) {
             push(input)
             let newOptions = [...options]
@@ -36,7 +59,9 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                 })
             }
             setOptions(newOptions)
-            ref.current.innerText = ""
+            ref.current.value = ""
+            setInputText("")
+            setCursorOffset(0)
         }
     }
 
@@ -45,30 +70,59 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
             return (
                 <div className="input-container w-full">
                     {block.map((opt, index) => {
-                        return (
-                            <span className="inline" key={index}>
-                                {print(opt)}
-                            </span>
-                        )
+                        return <span key={index}>{print(opt)}</span>
                     })}
                     {loading === false ? (
-                        <div
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                    handleSubmit(e, inputRef)
-                                } else if (e.key === "ArrowUp") {
-                                    e.preventDefault()
-                                    up()
-                                } else if (e.key === "ArrowDown") {
-                                    e.preventDefault()
-                                    down()
-                                }
-                            }}
-                            id="input"
-                            ref={inputRef}
-                            spellCheck="false"
-                            className="font-ubuntu-mono inline text-terminal-size text-terminal-white outline-none"
-                            contentEditable></div>
+                        <>
+                            <span className="relative">
+                                <textarea
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            handleSubmit(e, inputRef)
+                                        } else if (e.key === "ArrowUp") {
+                                            e.preventDefault()
+                                            up()
+                                        } else if (e.key === "ArrowDown") {
+                                            e.preventDefault()
+                                            down()
+                                        } else if (e.key === "ArrowLeft") {
+                                            handleLeftArrow()
+                                            const cursorPosition = inputRef.current?.selectionStart
+                                            if (cursorPosition) {
+                                                inputRef.current?.setSelectionRange(cursorPosition - 1, cursorPosition - 1)
+                                                e.preventDefault()
+                                            }
+                                        } else if (e.key === "ArrowRight") {
+                                            handleRightArrow()
+                                            const cursorPosition = inputRef.current?.selectionStart
+                                            if (cursorPosition) {
+                                                inputRef.current?.setSelectionRange(cursorPosition + 1, cursorPosition + 1)
+                                                e.preventDefault()
+                                            }
+                                        }
+                                    }}
+                                    onInput={handleInput}
+                                    id="input"
+                                    ref={inputRef}
+                                    spellCheck="false"
+                                    className="font-ubuntu-mono absolute top-0 left-0 h-[20px] text-opacity-0 pointer-events-none bg-transparent resize-none inline text-terminal-size caret-transparent text-terminal-white outline-none"></textarea>
+                                <span ref={ref} className="font-ubuntu-mono h-[21px] text-terminal-white text-terminal-size">
+                                    {inputText}
+                                </span>
+                            </span>
+                            {showCursor ? (
+                                <div
+                                    className="blink"
+                                    style={{
+                                        position: "absolute",
+                                        left: cursorPosition.x + "px",
+                                        top: (cursorPosition.y / window.innerHeight) * 100 + "vh",
+                                        backgroundColor: "rgba(208, 207, 204, 1)",
+                                        width: "9px",
+                                        height: "20px",
+                                    }}></div>
+                            ) : null}
+                        </>
                     ) : null}
                 </div>
             )
@@ -79,9 +133,78 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
         }
     }
 
+    const scrollToBottom = () => {
+        const lastChild = containerRef.current?.lastElementChild
+        if (lastChild) {
+            lastChild.scrollIntoView()
+        }
+    }
+
+    const handleInput = (e: any) => {
+        if (e.nativeEvent.inputType === "deleteContentForward" && cursorOffset > 0) {
+            setCursorOffset((prev) => prev - 1)
+        } else if (e.nativeEvent.inputType === "deleteWordForward" && cursorOffset > 0) {
+            const currIndex = inputText.length - cursorOffset
+            let indexUntilDeletion
+            if (inputText[currIndex] === " ") {
+                indexUntilDeletion = findLastSpaceFromIndex(inputText, currIndex)
+            } else {
+                indexUntilDeletion =
+                    inputText.substring(currIndex).indexOf(" ") === -1
+                        ? inputText.length - 1
+                        : findLastSpaceFromIndex(inputText, inputText.substring(currIndex).indexOf(" ") + currIndex)
+            }
+            const newInputText = inputText.substring(0, currIndex) + inputText.substring(indexUntilDeletion + 1)
+            const amoutOfCharsDeleted = inputText.length - newInputText.length
+            setInputText(newInputText)
+            setCursorOffset((prev) => prev - amoutOfCharsDeleted)
+        }
+        setInputText(e.target.value)
+    }
+
+    const handleLeftArrow = () => {
+        if (inputRef.current?.value && inputRef.current?.value.length > cursorOffset) {
+            setCursorOffset((prev) => prev + 1)
+        }
+    }
+
+    const handleRightArrow = () => {
+        if (cursorOffset > 0) {
+            setCursorOffset((prev) => prev - 1)
+        }
+    }
+
+    useEffect(() => {
+        if (loading === true) {
+            setTimeout(() => {
+                setShowCursor(false)
+            }, 0)
+        } else {
+            setTimeout(() => {
+                setShowCursor(true)
+            }, 0)
+        }
+    }, [loading])
+
+    useEffect(() => {
+        if (loading === true) {
+            return
+        }
+        setTimeout(() => {
+            const containerBounds = containerRef.current?.getBoundingClientRect()
+            const refBounds = ref.current?.getBoundingClientRect()
+            if (!containerBounds || !refBounds) return
+            setCursorPosition({
+                x: refBounds.x + refBounds.width - cursorOffset * 9,
+                y: containerBounds?.height - 15,
+            })
+        }, 0)
+    }, [inputText, loading, cursorOffset])
+
     useEffect(() => {
         if (inputRef.current) {
-            inputRef.current.innerText = history[index]
+            inputRef.current.value = history[index]
+            setInputText(history[index])
             setTimeout(() => {
                 const input = document.getElementById("input")
                 if (input && input.firstChild) {
@@ -102,21 +225,22 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     }, [options, inputRef.current, refresh])
 
     useEffect(() => {
-        if (loading === false) {
-            inputRef.current?.focus()
+        if (loading === false && inputRef.current) {
+            inputRef.current.focus()
         }
     }, [loading])
-
-    const scrollToBottom = () => {
-        const lastChild = containerRef.current?.lastElementChild
-        if (lastChild) {
-            lastChild.scrollIntoView()
-        }
-    }
 
     useEffect(() => {
         scrollToBottom()
     }, [lines, loading])
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowHeight(getWindowHeight())
+        }
+        window.addEventListener("resize", handleResize)
+        return () => window.removeEventListener("resize", handleResize)
+    }, [])
 
     return (
         <div ref={containerRef}>
