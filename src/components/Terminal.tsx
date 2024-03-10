@@ -44,13 +44,14 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
         e.preventDefault()
         const input = ref.current?.value
         if (input) {
-            push(input)
+            const trimmedInput = input.trim()
+            push(trimmedInput)
             let newOptions = [...options]
-            if (input === "clear") {
+            if (trimmedInput === "clear") {
                 newOptions = [printCommandPrompt()]
             } else {
                 const queryOptions = printQuery(input)
-                const queryResult = query(input, history)
+                const queryResult = query(trimmedInput, history)
                 queryOptions.options.forEach((opt) => {
                     newOptions[options.length - 1].options.push(opt)
                 })

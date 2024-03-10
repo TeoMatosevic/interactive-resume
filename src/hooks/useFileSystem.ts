@@ -2,6 +2,11 @@ import { useState } from "react"
 import { usePrinter } from "."
 import { Block, ListNode, NodeType } from "../models"
 
+enum ChangeDirectoryCommand {
+    CD = "cd",
+    LS = "ls",
+}
+
 interface Node {
     name: string
     children: Node[]
@@ -28,7 +33,8 @@ const useFileSystem = () => {
         printStartUp,
         printQuery,
         printCdSuccess,
-        printLsCommand,
+        printLsFail,
+        printLsSuccess,
         printCatCommand,
         printCatFail,
     } = usePrinter()
@@ -122,8 +128,8 @@ I hope you like it!`,
     const cd = (name: string): ChangeDirectoryStatus => {
         const paths = name.split("/")
         let currNode = currentNode
-        for (const path of paths) {
-            const status = changeDirectory(path, currNode)
+        for (const p of paths) {
+            const status = changeDirectory(p, currNode, ChangeDirectoryCommand.CD)
             if (!status.success) {
                 return status
             }
@@ -137,7 +143,7 @@ I hope you like it!`,
         }
     }
 
-    const changeDirectory = (name: string, currNode: Node): ChangeDirectoryStatus => {
+    const changeDirectory = (name: string, currNode: Node, cdc: ChangeDirectoryCommand): ChangeDirectoryStatus => {
         if (name === ".") {
             return {
                 success: true,
@@ -149,7 +155,7 @@ I hope you like it!`,
             if (currNode.name === "guest") {
                 return {
                     success: false,
-                    message: "tmatosevic: cd: permission denied: guest",
+                    message: `tmatosevic: ${cdc}: permission denied: guest`,
                 }
             }
             const parent = findParent(currNode)
@@ -163,16 +169,22 @@ I hope you like it!`,
             }
             return {
                 success: false,
-                message: "tmatosevic: cd: permission denied: root",
+                message: `tmatosevic: ${cdc}: permission denied: root`,
             }
         } else if (name.startsWith("/")) {
             return {
                 success: false,
-                message: "tmatosevic: cd: permission denied: guest",
+                message: `tmatosevic: ${cdc}: permission denied: guest`,
             }
         }
         const node = findNode(currNode, name)
         if (node) {
+            if (node.type === NodeType.File && cdc === ChangeDirectoryCommand.CD) {
+                return {
+                    success: false,
+                    message: `tmatosevic: ${cdc}: ${name}: Not a directory`,
+                }
+            }
             return {
                 success: true,
                 message: "",
@@ -182,13 +194,16 @@ I hope you like it!`,
         } else {
             return {
                 success: false,
-                message: `tmatosevic: cd: ${name}: No such file or directory`,
+                message: `tmatosevic: ${cdc}: ${name}: No such file or directory`,
             }
         }
     }
 
-    const list = (): ListNode[] => {
-        return currentNode.children.map((child) => {
+    const list = (node: Node): ListNode[] => {
+        if (node.type === NodeType.File) {
+            return [{ name: node.name, type: node.type }]
+        }
+        return node.children.map((child) => {
             return {
                 name: child.name,
                 type: child.type,
@@ -201,7 +216,7 @@ I hope you like it!`,
             return printHelpCommand(getPath(currentNode))
         } else if (query === "whoami") {
             return printWhoAmICommand(getPath(currentNode))
-        } else if (query.startsWith("whois")) {
+        } else if (query === "whois") {
             return printWhoIsCommand(getPath(currentNode))
         } else if (query === "history") {
             return printHistoryCommand(history, getPath(currentNode))
@@ -216,8 +231,22 @@ I hope you like it!`,
         } else if (query.split(" ")[0] === "cat") {
             const file = query.split(" ")[1]
             return printFile(file)
-        } else if (query === "ls") {
-            return printLsCommand(list(), getPath(currentNode))
+        } else if (query.split(" ")[0] === "ls") {
+            if (query.split(" ").length === 1) {
+                return printLsSuccess(list(currentNode), getPath(currentNode))
+            } else {
+                const path = query.split(" ")[1]
+                const paths = path.split("/")
+                let nodeToList = currentNode
+                for (const p of paths) {
+                    const node = changeDirectory(p, nodeToList, ChangeDirectoryCommand.LS)
+                    if (!node.success) {
+                        return printLsFail(node.message, getPath(currentNode))
+                    }
+                    nodeToList = node.node!
+                }
+                return printLsSuccess(list(nodeToList), getPath(currentNode))
+            }
         } else {
             return printCommandNotFound(query, getPath(currentNode))
         }

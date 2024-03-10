@@ -444,7 +444,7 @@ const usePrinter = () => {
         return [block, printPrompt(currPath)]
     }
 
-    const printLsCommand = (contents: ListNode[], currPath: string) => {
+    const printLsSuccess = (contents: ListNode[], currPath: string) => {
         const block: Block = {
             options: contents.map((node) => {
                 return {
@@ -460,6 +460,19 @@ const usePrinter = () => {
                 color: Color.WHITE,
                 text: "\n",
             })
+        }
+        return [block, printPrompt(currPath)]
+    }
+
+    const printLsFail = (message: string, currPath: string): Block[] => {
+        const block: Block = {
+            options: [
+                {
+                    color: Color.RED,
+                    text: message + "\n",
+                },
+            ],
+            async: true,
         }
         return [block, printPrompt(currPath)]
     }
@@ -527,7 +540,8 @@ const usePrinter = () => {
         printHistoryCommand,
         printCdFail,
         printCdSuccess,
-        printLsCommand,
+        printLsSuccess,
+        printLsFail,
         printCatCommand,
         printCatFail,
     }
