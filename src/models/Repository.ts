@@ -4,5 +4,5 @@ export default interface Repository {
     full_name: string
     description: string
     readme: string
-    languages: { [key: string]: string }
+    languages: { [key: string]: number }
 }

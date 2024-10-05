@@ -89,6 +89,33 @@ const useFileSystem = () => {
         }
     }
 
+    const toAbout = (repository: Repository): Node => {
+        let content = repository.description
+        let numOfBytes: number = 0
+        for (const lang in repository.languages) {
+            numOfBytes += repository.languages[lang]
+        }
+        const languages = []
+        for (const lang in repository.languages) {
+            languages.push({ [lang]: repository.languages[lang] })
+        }
+        languages.sort((a, b) => Object.values(b)[0] - Object.values(a)[0])
+        content += "\n\n"
+        content += "Languages used:\n"
+        languages.forEach(lang => {
+            const key = Object.keys(lang)[0]
+            const value = Object.values(lang)[0]
+            const percentage = ((value / numOfBytes) * 100).toFixed(2)
+            content += `  - ${key}: ${percentage}%\n`
+        })
+        return {
+            name: "about.txt",
+            children: [],
+            type: NodeType.File,
+            contents: content,
+        }
+    }
+
     const addGithubProjects = (previousFolderStructure: Node): Node => {
         const folder: Node = {
             name: "github-projects",
@@ -109,20 +136,21 @@ const useFileSystem = () => {
                         children: [],
                         type: NodeType.Folder,
                     }
+                    let readmeContent = repository.readme
+                    if (readmeContent === "") {
+                        readmeContent = `${repository.name}`
+                    }
                     const readme: Node = {
                         name: "README.md",
                         children: [],
                         type: NodeType.File,
-                        contents: repository.readme,
+                        contents: readmeContent,
                     }
-                    const description: Node = {
-                        name: "description.txt",
-                        children: [],
-                        type: NodeType.File,
-                        contents: repository.description,
+                    if (!!repository.languages && repository.description !== "") {
+                        const about = toAbout(repository)
+                        node.children.push(about)
                     }
                     node.children.push(readme)
-                    node.children.push(description)
                     folder.children.push(node)
                 })
             })
