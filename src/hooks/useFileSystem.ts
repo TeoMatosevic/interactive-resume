@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { usePrinter } from "."
-import { Block, ListNode, NodeType } from "../models"
+import { Block, ListNode, NodeType, Repository } from "../models"
+
+const apiUrl = import.meta.env.VITE_API_URL
 
 enum ChangeDirectoryCommand {
     CD = "cd",
@@ -21,24 +23,8 @@ interface ChangeDirectoryStatus {
     node?: Node
 }
 
-const useFileSystem = () => {
-    const {
-        printHelpCommand,
-        printCommandNotFound,
-        printWhoAmICommand,
-        printWhoIsCommand,
-        printHistoryCommand,
-        printCdFail,
-        printPrompt,
-        printStartUp,
-        printQuery,
-        printCdSuccess,
-        printLsFail,
-        printLsSuccess,
-        printCatCommand,
-        printCatFail,
-    } = usePrinter()
-    const [fileSystem, setFileSystem] = useState<Node>({
+const initFileSystem = (): Node => {
+    return {
         name: "root",
         children: [
             {
@@ -69,8 +55,91 @@ I hope you like it!`,
             },
         ],
         type: NodeType.Folder,
-    })
+    }
+}
+
+const useFileSystem = () => {
+    const {
+        printHelpCommand,
+        printCommandNotFound,
+        printWhoAmICommand,
+        printWhoIsCommand,
+        printHistoryCommand,
+        printCdFail,
+        printPrompt,
+        printStartUp,
+        printQuery,
+        printCdSuccess,
+        printLsFail,
+        printLsSuccess,
+        printCatCommand,
+        printCatFail,
+    } = usePrinter()
+    const [fileSystem, setFileSystem] = useState<Node>(initFileSystem())
     const [currentNode, setCurrentNode] = useState<Node>(fileSystem.children[0].children[0])
+
+    const parseToRepository = (data: any): Repository => {
+        return {
+            id: data.id,
+            name: data.name,
+            full_name: data.full_name,
+            description: data.description,
+            readme: data.readme,
+            languages: data.languages,
+        }
+    }
+
+    const addGithubProjects = (previousFolderStructure: Node): Node => {
+        const folder: Node = {
+            name: "github-projects",
+            children: [],
+            type: NodeType.Folder,
+        }
+
+        fetch(apiUrl + "/data")
+            .then(response => response.json())
+            .then(data => {
+                if (!data.repositories) {
+                    return
+                }
+                data.repositories.forEach((d: any) => {
+                    const repository = parseToRepository(d)
+                    const node: Node = {
+                        name: repository.name,
+                        children: [],
+                        type: NodeType.Folder,
+                    }
+                    const readme: Node = {
+                        name: "README.md",
+                        children: [],
+                        type: NodeType.File,
+                        contents: repository.readme,
+                    }
+                    const description: Node = {
+                        name: "description.txt",
+                        children: [],
+                        type: NodeType.File,
+                        contents: repository.description,
+                    }
+                    node.children.push(readme)
+                    node.children.push(description)
+                    folder.children.push(node)
+                })
+            })
+        const newFileSystem = { ...previousFolderStructure }
+
+        const projectsFolder = findNodeRecursively(newFileSystem, "Projects")
+        if (projectsFolder) {
+            projectsFolder.children.push(folder)
+        }
+
+        return newFileSystem
+    }
+
+    const addProjects = () => {
+        const folderStructureWithGithubProjects = addGithubProjects(fileSystem)
+        setFileSystem(folderStructureWithGithubProjects)
+    }
 
     const findNodeRecursively = (node: Node, name: string): Node | undefined => {
         if (node.name === name) {
@@ -126,6 +195,12 @@ I hope you like it!`,
     }
 
     const cd = (name: string): ChangeDirectoryStatus => {
+        if (name.startsWith("/")) {
+            return {
+                success: false,
+                message: `tmatosevic: cd: permission denied: guest`,
+            }
+        }
         const paths = name.split("/")
         let currNode = currentNode
         for (const p of paths) {
@@ -203,7 +278,7 @@ I hope you like it!`,
         if (node.type === NodeType.File) {
             return [{ name: node.name, type: node.type }]
         }
-        return node.children.map((child) => {
+        return node.children.map(child => {
             return {
                 name: child.name,
                 type: child.type,
@@ -275,7 +350,7 @@ I hope you like it!`,
         }
     }
 
-    return { query, printCommandPrompt, printQuery, printInit }
+    return { query, printCommandPrompt, printQuery, printInit, addProjects }
 }
 
 export default useFileSystem

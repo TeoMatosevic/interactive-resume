@@ -26,17 +26,18 @@ const findLastSpaceFromIndex = (input: string, index: number): number => {
 }
 
 const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
-    const { query, printCommandPrompt, printInit, printQuery } = useFileSystem()
+    const { query, printCommandPrompt, printInit, printQuery, addProjects } = useFileSystem()
     const [options, setOptions] = useState<Block[]>(printInit)
     const { push, up, down, history, index } = useHistory()
     const [loading, setLoading] = useState<boolean>(false)
     const [inputText, setInputText] = useState("")
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 })
-    const [windowHeight, setWindowHeight] = useState(getWindowHeight())
+    const [_windowHeight, setWindowHeight] = useState(getWindowHeight())
     const [showCursor, setShowCursor] = useState<boolean>(true)
     const [cursorOffset, setCursorOffset] = useState<number>(0)
     const inputRef = useRef<HTMLTextAreaElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
+    const bottomRef = useRef<HTMLDivElement>(null)
     const ref = useRef<HTMLSpanElement>(null)
     const lines = usePrintOptions(options, setLoading)
 
@@ -52,10 +53,10 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
             } else {
                 const queryOptions = printQuery(input)
                 const queryResult = query(trimmedInput, history)
-                queryOptions.options.forEach((opt) => {
+                queryOptions.options.forEach(opt => {
                     newOptions[options.length - 1].options.push(opt)
                 })
-                queryResult.forEach((opt) => {
+                queryResult.forEach(opt => {
                     newOptions.push(opt)
                 })
             }
@@ -77,27 +78,35 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                         <>
                             <span className="relative">
                                 <textarea
-                                    onKeyDown={(e) => {
+                                    onKeyDown={e => {
                                         if (e.key === "Enter") {
                                             handleSubmit(e, inputRef)
                                         } else if (e.key === "ArrowUp") {
                                             e.preventDefault()
                                             up()
+                                            setCursorOffset(0)
                                         } else if (e.key === "ArrowDown") {
                                             e.preventDefault()
                                             down()
+                                            setCursorOffset(0)
                                         } else if (e.key === "ArrowLeft") {
                                             handleLeftArrow()
                                             const cursorPosition = inputRef.current?.selectionStart
                                             if (cursorPosition) {
-                                                inputRef.current?.setSelectionRange(cursorPosition - 1, cursorPosition - 1)
+                                                inputRef.current?.setSelectionRange(
+                                                    cursorPosition - 1,
+                                                    cursorPosition - 1
+                                                )
                                                 e.preventDefault()
                                             }
                                         } else if (e.key === "ArrowRight") {
                                             handleRightArrow()
                                             const cursorPosition = inputRef.current?.selectionStart
                                             if (cursorPosition) {
-                                                inputRef.current?.setSelectionRange(cursorPosition + 1, cursorPosition + 1)
+                                                inputRef.current?.setSelectionRange(
+                                                    cursorPosition + 1,
+                                                    cursorPosition + 1
+                                                )
                                                 e.preventDefault()
                                             }
                                         }
@@ -106,8 +115,12 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                                     id="input"
                                     ref={inputRef}
                                     spellCheck="false"
-                                    className="font-ubuntu-mono absolute top-0 left-0 h-[20px] text-opacity-0 pointer-events-none bg-transparent resize-none inline text-terminal-size caret-transparent text-terminal-white outline-none"></textarea>
-                                <span ref={ref} className="font-ubuntu-mono h-[21px] text-terminal-white text-terminal-size">
+                                    className="font-ubuntu-mono absolute top-0 left-0 h-[20px] text-opacity-0 pointer-events-none bg-transparent resize-none inline text-terminal-size caret-transparent text-terminal-white outline-none"
+                                ></textarea>
+                                <span
+                                    ref={ref}
+                                    className="font-ubuntu-mono h-[21px] text-terminal-white text-terminal-size"
+                                >
                                     {inputText}
                                 </span>
                             </span>
@@ -121,7 +134,8 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                                         backgroundColor: "rgba(208, 207, 204, 1)",
                                         width: "9px",
                                         height: "20px",
-                                    }}></div>
+                                    }}
+                                ></div>
                             ) : null}
                         </>
                     ) : null}
@@ -135,15 +149,12 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     }
 
     const scrollToBottom = () => {
-        const lastChild = containerRef.current?.lastElementChild
-        if (lastChild) {
-            lastChild.scrollIntoView()
-        }
+        bottomRef.current?.scrollIntoView()
     }
 
     const handleInput = (e: any) => {
         if (e.nativeEvent.inputType === "deleteContentForward" && cursorOffset > 0) {
-            setCursorOffset((prev) => prev - 1)
+            setCursorOffset(prev => prev - 1)
         } else if (e.nativeEvent.inputType === "deleteWordForward" && cursorOffset > 0) {
             const currIndex = inputText.length - cursorOffset
             let indexUntilDeletion
@@ -157,21 +168,21 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
             }
             const newInputText = inputText.substring(0, currIndex) + inputText.substring(indexUntilDeletion + 1)
             const amoutOfCharsDeleted = inputText.length - newInputText.length
-            setInputText(newInputText)
-            setCursorOffset((prev) => prev - amoutOfCharsDeleted)
+            // setInputText(newInputText)
+            setCursorOffset(prev => prev - amoutOfCharsDeleted)
         }
         setInputText(e.target.value)
     }
 
     const handleLeftArrow = () => {
         if (inputRef.current?.value && inputRef.current?.value.length > cursorOffset) {
-            setCursorOffset((prev) => prev + 1)
+            setCursorOffset(prev => prev + 1)
         }
     }
 
     const handleRightArrow = () => {
         if (cursorOffset > 0) {
-            setCursorOffset((prev) => prev - 1)
+            setCursorOffset(prev => prev - 1)
         }
     }
 
@@ -236,6 +247,7 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     }, [lines, loading])
 
     useEffect(() => {
+        addProjects()
         const handleResize = () => {
             setWindowHeight(getWindowHeight())
         }
@@ -248,6 +260,7 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
             {lines.map((opt, index) => {
                 return <div key={index}>{printBlock(opt, index)}</div>
             })}
+            <div ref={bottomRef}></div>
         </div>
     )
 }
@@ -255,7 +268,11 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
 const print = (opt: PrinterOptions) => {
     const textColor: string = getColor(opt.color)
     const additionalClassName = opt.className ? opt.className : ""
-    return <span className={`font-ubuntu-mono whitespace-pre-wrap text-terminal-size ${textColor} ${additionalClassName}`}>{opt.text}</span>
+    return (
+        <span className={`font-ubuntu-mono whitespace-pre-wrap text-terminal-size ${textColor} ${additionalClassName}`}>
+            {opt.text}
+        </span>
+    )
 }
 
 export default Terminal
