@@ -25,34 +25,32 @@ interface ChangeDirectoryStatus {
 
 const initFileSystem = (): Node => {
     return {
-        name: "root",
-        children: [
-            {
-                name: "home",
-                children: [
-                    {
-                        name: "guest",
-                        children: [
-                            {
-                                name: "Projects",
-                                children: [],
-                                type: NodeType.Folder,
-                            },
-                            {
-                                name: "about.txt",
-                                children: [],
-                                type: NodeType.File,
-                                contents: `\
+        name: "root", children: [{
+            name: "home",
+            children: [
+                {
+                    name: "guest",
+                    children: [
+                        {
+                            name: "Projects",
+                            children: [],
+                            type: NodeType.Folder,
+                        },
+                        {
+                            name: "about.txt",
+                            children: [],
+                            type: NodeType.File,
+                            contents: `\
 This is a project created by Teo Matošević.
 Its purpose is to showcase my skills and knowledge.
 I hope you like it!`,
-                            },
-                        ],
-                        type: NodeType.Folder,
-                    },
-                ],
-                type: NodeType.Folder,
-            },
+                        },
+                    ],
+                    type: NodeType.Folder,
+                },
+            ],
+            type: NodeType.Folder,
+        },
         ],
         type: NodeType.Folder,
     }
@@ -123,7 +121,7 @@ const useFileSystem = () => {
             type: NodeType.Folder,
         }
 
-        fetch(apiUrl + "/data")
+        fetch(apiUrl + "/api/v1/data")
             .then(response => response.json())
             .then(data => {
                 if (!data.repositories) {
