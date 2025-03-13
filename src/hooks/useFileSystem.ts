@@ -93,19 +93,23 @@ const useFileSystem = () => {
         for (const lang in repository.languages) {
             numOfBytes += repository.languages[lang]
         }
-        const languages = []
-        for (const lang in repository.languages) {
-            languages.push({ [lang]: repository.languages[lang] })
+        if (content !== "" && repository.languages) {
+            content += "\n\n"
         }
-        languages.sort((a, b) => Object.values(b)[0] - Object.values(a)[0])
-        content += "\n\n"
-        content += "Languages used:\n"
-        languages.forEach(lang => {
-            const key = Object.keys(lang)[0]
-            const value = Object.values(lang)[0]
-            const percentage = ((value / numOfBytes) * 100).toFixed(2)
-            content += `  - ${key}: ${percentage}%\n`
-        })
+        if (repository.languages) {
+            const languages = []
+            for (const lang in repository.languages) {
+                languages.push({ [lang]: repository.languages[lang] })
+            }
+            languages.sort((a, b) => Object.values(b)[0] - Object.values(a)[0])
+            content += "Languages used:\n"
+            languages.forEach(lang => {
+                const key = Object.keys(lang)[0]
+                const value = Object.values(lang)[0]
+                const percentage = ((value / numOfBytes) * 100).toFixed(2)
+                content += `  - ${key}: ${percentage}%\n`
+            })
+        }
         return {
             name: "about.txt",
             children: [],
@@ -144,7 +148,7 @@ const useFileSystem = () => {
                         type: NodeType.File,
                         contents: readmeContent,
                     }
-                    if (!!repository.languages && repository.description !== "") {
+                    if (!!repository.languages || repository.description !== "") {
                         const about = toAbout(repository)
                         node.children.push(about)
                     }
