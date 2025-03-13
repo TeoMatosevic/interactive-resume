@@ -109,6 +109,8 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                                                 )
                                                 e.preventDefault()
                                             }
+                                        } else if (e.key === "Tab") {
+                                            e.preventDefault()
                                         }
                                     }}
                                     onInput={handleInput}
