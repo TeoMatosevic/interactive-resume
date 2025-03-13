@@ -12,16 +12,29 @@ const getWindowHeight = () => {
     return window.innerHeight
 }
 
-const findLastSpaceFromIndex = (input: string, index: number): number => {
-    for (let i = index; i < input.length; i++) {
-        if (input[i] !== " ") {
-            return i - 1
+const findLastSpaceFromIndex = (input: string, index: number, direction: number | undefined): number => {
+    if (direction === undefined || direction > 0) {
+        for (let i = index; i < input.length; i++) {
+            if (input[i] !== " ") {
+                return i - 1
+            }
         }
-    }
-    if (input[index] === " ") {
-        return input.length - 1
+        if (input[index] === " ") {
+            return input.length - 1
+        } else {
+            return index
+        }
     } else {
-        return index
+        for (let i = index; i >= 0; i--) {
+            if (input[i] !== " ") {
+                return i
+            }
+        }
+        if (input[index] === " ") {
+            return 0
+        } else {
+            return index
+        }
     }
 }
 
@@ -161,19 +174,35 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
             const currIndex = inputText.length - cursorOffset
             let indexUntilDeletion
             if (inputText[currIndex] === " ") {
-                indexUntilDeletion = findLastSpaceFromIndex(inputText, currIndex)
+                indexUntilDeletion = findLastSpaceFromIndex(inputText, currIndex, 1)
             } else {
                 indexUntilDeletion =
                     inputText.substring(currIndex).indexOf(" ") === -1
                         ? inputText.length - 1
-                        : findLastSpaceFromIndex(inputText, inputText.substring(currIndex).indexOf(" ") + currIndex)
+                        : findLastSpaceFromIndex(inputText, inputText.substring(currIndex).indexOf(" ") + currIndex, 1)
             }
             const newInputText = inputText.substring(0, currIndex) + inputText.substring(indexUntilDeletion + 1)
             const amoutOfCharsDeleted = inputText.length - newInputText.length
-            // setInputText(newInputText)
+            setInputText(newInputText)
             setCursorOffset(prev => prev - amoutOfCharsDeleted)
+            e.target.value = newInputText
+        } else if (e.nativeEvent.inputType === "deleteWordBackward" && cursorOffset < inputText.length) {
+            const currIndex = inputText.length - cursorOffset
+            let indexUntilDeletion
+            if (inputText[currIndex] === " ") {
+                indexUntilDeletion = findLastSpaceFromIndex(inputText, currIndex, -1)
+            } else {
+                indexUntilDeletion =
+                    inputText.substring(0, currIndex).lastIndexOf(" ") === -1
+                        ? 0
+                        : findLastSpaceFromIndex(inputText, inputText.substring(0, currIndex).lastIndexOf(" "), -1)
+            }
+            const newInputText = inputText.substring(0, indexUntilDeletion) + inputText.substring(currIndex)
+            setInputText(newInputText)
+            e.target.value = newInputText
+        } else {
+            setInputText(e.target.value)
         }
-        setInputText(e.target.value)
     }
 
     const handleLeftArrow = () => {
