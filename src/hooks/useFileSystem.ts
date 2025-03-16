@@ -75,6 +75,7 @@ const useFileSystem = () => {
     } = usePrinter()
     const [fileSystem, setFileSystem] = useState<Node>(initFileSystem())
     const [currentNode, setCurrentNode] = useState<Node>(fileSystem.children[0].children[0])
+    const [loading, setLoading] = useState<boolean>(true)
 
     const parseToRepository = (data: any): Repository => {
         return {
@@ -155,6 +156,7 @@ const useFileSystem = () => {
                     node.children.push(readme)
                     folder.children.push(node)
                 })
+                setLoading(false)
             })
         const newFileSystem = { ...previousFolderStructure }
 
@@ -380,7 +382,7 @@ const useFileSystem = () => {
         }
     }
 
-    return { query, printCommandPrompt, printQuery, printInit, addProjects }
+    return { query, printCommandPrompt, printQuery, printInit, addProjects, loading }
 }
 
 export default useFileSystem

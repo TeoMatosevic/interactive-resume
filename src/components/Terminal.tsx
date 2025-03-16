@@ -39,7 +39,7 @@ const findLastSpaceFromIndex = (input: string, index: number, direction: number 
 }
 
 const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
-    const { query, printCommandPrompt, printInit, printQuery, addProjects } = useFileSystem()
+    const { query, printCommandPrompt, printInit, printQuery } = useFileSystem()
     const [options, setOptions] = useState<Block[]>(printInit)
     const { push, up, down, history, index } = useHistory()
     const [loading, setLoading] = useState<boolean>(false)
@@ -278,7 +278,6 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     }, [lines, loading])
 
     useEffect(() => {
-        addProjects()
         const handleResize = () => {
             setWindowHeight(getWindowHeight())
         }
