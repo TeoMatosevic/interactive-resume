@@ -389,28 +389,6 @@ const useFileSystem = () => {
         }
     }
 
-    /*
-    const findCurrentNode = (node: Node, name: string): Node | undefined => {
-        if (node.name === name) {
-            return node
-        } else {
-            for (const child of node.children) {
-                const found = findCurrentNode(child, name)
-                if (found) {
-                    return found
-                }
-            }
-        }
-    }
-
-    const refreshCurrentNode = () => {
-        const node = findCurrentNode(fileSystem, currentNode.name)
-        if (node) {
-            setCurrentNode(node)
-        }
-    }
-    */
-
     useEffect(() => {
         addProjects()
     }, [])
