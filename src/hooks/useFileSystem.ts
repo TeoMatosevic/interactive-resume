@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { usePrinter } from "."
 import { Block, ListNode, NodeType, Repository } from "../models"
 
@@ -85,6 +85,7 @@ const useFileSystem = () => {
             description: data.description,
             readme: data.readme,
             languages: data.languages,
+            last_updated: new Date(data.last_update).toLocaleString(),
         }
     }
 
@@ -111,6 +112,12 @@ const useFileSystem = () => {
                 content += `  - ${key}: ${percentage}%\n`
             })
         }
+
+        if (content !== "") {
+            content += "\n"
+            content += `Last updated: ${repository.last_updated}`
+        }
+
         return {
             name: "about.txt",
             children: [],
@@ -156,7 +163,7 @@ const useFileSystem = () => {
                     node.children.push(readme)
                     folder.children.push(node)
                 })
-                setLoading(false)
+                setTimeout(() => setLoading(false), 2000)
             })
         const newFileSystem = { ...previousFolderStructure }
 
@@ -381,6 +388,32 @@ const useFileSystem = () => {
             return printCatFail(`cat: ${file}: No such file or directory`, getPath(currentNode))
         }
     }
+
+    /*
+    const findCurrentNode = (node: Node, name: string): Node | undefined => {
+        if (node.name === name) {
+            return node
+        } else {
+            for (const child of node.children) {
+                const found = findCurrentNode(child, name)
+                if (found) {
+                    return found
+                }
+            }
+        }
+    }
+
+    const refreshCurrentNode = () => {
+        const node = findCurrentNode(fileSystem, currentNode.name)
+        if (node) {
+            setCurrentNode(node)
+        }
+    }
+    */
+
+    useEffect(() => {
+        addProjects()
+    }, [])
 
     return { query, printCommandPrompt, printQuery, printInit, addProjects, loading }
 }

@@ -5,4 +5,5 @@ export default interface Repository {
     description: string
     readme: string
     languages: { [key: string]: number }
+    last_updated: string
 }
