@@ -7,6 +7,8 @@ const apiUrl = import.meta.env.VITE_API_URL
 enum ChangeDirectoryCommand {
     CD = "cd",
     LS = "ls",
+    CAT = "cat",
+    READ = "read",
 }
 
 interface Node {
@@ -70,7 +72,7 @@ const useFileSystem = () => {
         printCdSuccess,
         printLsFail,
         printLsSuccess,
-        printCatCommand,
+        printCatSuccess,
         printCatFail,
         printBlank,
     } = usePrinter()
@@ -176,7 +178,7 @@ const useFileSystem = () => {
             })
         const newFileSystem = { ...previousFolderStructure }
 
-        const projectsFolder = findNodeRecursively(newFileSystem, "Projects")
+        const projectsFolder = findNodeByName(newFileSystem, "Projects")
         if (projectsFolder) {
             projectsFolder.children.push(folder)
         }
@@ -189,12 +191,12 @@ const useFileSystem = () => {
         setFileSystem(folderStructureWithGithubProjects)
     }
 
-    const findNodeRecursively = (node: Node, name: string): Node | undefined => {
+    const findNodeByName = (node: Node, name: string): Node | undefined => {
         if (node.name === name) {
             return node
         } else {
             for (const child of node.children) {
-                const found = findNodeRecursively(child, name)
+                const found = findNodeByName(child, name)
                 if (found) {
                     return found
                 }
@@ -210,7 +212,7 @@ const useFileSystem = () => {
                 }
             }
         } else {
-            return findNodeRecursively(fileSystem, name)
+            return findNodeByName(fileSystem, name)
         }
     }
 
@@ -263,6 +265,96 @@ const useFileSystem = () => {
             success: true,
             message: "",
             path: getPath(currNode),
+        }
+    }
+
+    const ls = (name: string): ChangeDirectoryStatus => {
+        if (name.startsWith("/")) {
+            return {
+                success: false,
+                message: `tmatosevic: ls: permission denied: guest`,
+            }
+        }
+        const paths = name.split("/")
+        let currNode = currentNode
+        for (const p of paths) {
+            const status = changeDirectory(p, currNode, ChangeDirectoryCommand.LS)
+            if (!status.success) {
+                return status
+            }
+            currNode = status.node!
+        }
+        return {
+            success: true,
+            message: "",
+            path: getPath(currNode),
+            node: currNode,
+        }
+    }
+
+    const cat = (name: string): ChangeDirectoryStatus => {
+        if (name.startsWith("/")) {
+            return {
+                success: false,
+                message: `tmatosevic: cat: permission denied: guest`,
+            }
+        }
+        const paths = name.split("/")
+        let currNode = currentNode
+        for (const p of paths) {
+            const status = changeDirectory(p, currNode, ChangeDirectoryCommand.CAT)
+            if (!status.success) {
+                return status
+            }
+            currNode = status.node!
+        }
+        if (currNode.type === NodeType.Folder) {
+            return {
+                success: false,
+                message: `tmatosevic: cat: ${name}: Is a directory`,
+            }
+        }
+        return {
+            success: true,
+            message: "",
+            path: getPath(currNode),
+            node: currNode,
+        }
+    }
+
+    const read = (name: string): ChangeDirectoryStatus => {
+        if (name.startsWith("/")) {
+            return {
+                success: false,
+                message: `tmatosevic: read: permission denied: guest`,
+            }
+        }
+        const paths = name.split("/")
+        let currNode = currentNode
+        for (const p of paths) {
+            const status = changeDirectory(p, currNode, ChangeDirectoryCommand.READ)
+            if (!status.success) {
+                return status
+            }
+            currNode = status.node!
+        }
+        if (currNode.type === NodeType.Folder) {
+            return {
+                success: false,
+                message: `tmatosevic: read: ${name}: Is a directory`,
+            }
+        }
+        if (!currentNode.name.endsWith(".md")) {
+            return {
+                success: false,
+                message: `tmatosevic: read: ${name}: Not a markdown file`,
+            }
+        }
+        return {
+            success: true,
+            message: "",
+            path: getPath(currNode),
+            node: currNode,
         }
     }
 
@@ -344,44 +436,45 @@ const useFileSystem = () => {
         } else if (query.split(" ")[0] === "history") {
             return toQueryResult(printHistoryCommand(history, getPath(currentNode)), null)
         } else if (query.split(" ")[0] === "cd") {
-            const name = query.split(" ")[1]
-            const status = cd(name)
+            if (query.split(" ").length === 1) {
+                return toQueryResult(printCdFail("tmatosevic: cd: missing operand", getPath(currentNode)), null)
+            }
+            const path = query.split(" ")[1]
+            const status = cd(path)
             if (status.success) {
                 return toQueryResult(printCdSuccess(status.path!), null)
-            } else {
-                return toQueryResult(printCdFail(status.message, getPath(currentNode)), null)
             }
+            return toQueryResult(printCdFail(status.message, getPath(currentNode)), null)
         } else if (query.split(" ")[0] === "cat") {
-            const file = query.split(" ")[1]
-            return toQueryResult(printFile(file), null)
+            if (query.split(" ").length === 1) {
+                return toQueryResult(printCatFail("tmatosevic: cat: missing operand", getPath(currentNode)), null)
+            }
+            const path = query.split(" ")[1]
+            const status = cat(path)
+            if (status.success) {
+                return toQueryResult(printCatSuccess(status.node!.contents!, getPath(currentNode)), null)
+            }
+            return toQueryResult(printCatFail(status.message, getPath(currentNode)), null)
         } else if (query.split(" ")[0] === "ls") {
             if (query.split(" ").length === 1) {
                 return toQueryResult(printLsSuccess(list(currentNode), getPath(currentNode)), null)
-            } else {
-                const path = query.split(" ")[1]
-                const paths = path.split("/")
-                let nodeToList = currentNode
-                for (const p of paths) {
-                    const node = changeDirectory(p, nodeToList, ChangeDirectoryCommand.LS)
-                    if (!node.success) {
-                        return toQueryResult(printLsFail(node.message, getPath(currentNode)), null)
-                    }
-                    nodeToList = node.node!
-                }
-                return toQueryResult(printLsSuccess(list(nodeToList), getPath(currentNode)), null)
             }
+            const path = query.split(" ")[1]
+            const status = ls(path)
+            if (status.success) {
+                return toQueryResult(printLsSuccess(list(status.node!), getPath(currentNode)), null)
+            }
+            return toQueryResult(printLsFail(status.message, getPath(currentNode)), null)
         } else if (query.split(" ")[0] === "read") {
-            const file = query.split(" ")[1]
-            const paths = file.split("/")
-            let nodeToRead = currentNode
-            for (const p of paths) {
-                const node = changeDirectory(p, nodeToRead, ChangeDirectoryCommand.LS)
-                if (!node.success) {
-                    return toQueryResult(printCatFail(node.message, getPath(currentNode)), null)
-                }
-                nodeToRead = node.node!
+            if (query.split(" ").length === 1) {
+                return toQueryResult(printCatFail("tmatosevic: read: missing operand", getPath(currentNode)), null)
             }
-            return toQueryResult(printBlank(getPath(currentNode)), nodeToRead.contents)
+            const path = query.split(" ")[1]
+            const status = read(path)
+            if (status.success) {
+                return toQueryResult(printBlank(getPath(currentNode)), status.node!.contents || null)
+            }
+            return toQueryResult(printCatFail(status.message, getPath(currentNode)), null)
         } else {
             return toQueryResult(printCommandNotFound(query, getPath(currentNode)), null)
         }
@@ -393,21 +486,6 @@ const useFileSystem = () => {
 
     const printInit = () => {
         return printStartUp(getPath(currentNode))
-    }
-
-    const printFile = (file: string): Block[] => {
-        const node = findNode(currentNode, file)
-        if (node) {
-            if (node.type === NodeType.File && node.contents) {
-                return printCatCommand(node.contents, getPath(currentNode))
-            } else if (node.type === NodeType.Folder) {
-                return printCatFail(`cat: ${file}: Is a directory`, getPath(currentNode))
-            } else {
-                return printCatCommand("", getPath(currentNode))
-            }
-        } else {
-            return printCatFail(`cat: ${file}: No such file or directory`, getPath(currentNode))
-        }
     }
 
     useEffect(() => {

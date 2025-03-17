@@ -503,7 +503,7 @@ const usePrinter = () => {
         return [block, printPrompt(currPath)]
     }
 
-    const printCatCommand = (contents: string, currPath: string): Block[] => {
+    const printCatSuccess = (contents: string, currPath: string): Block[] => {
         const block: Block = {
             options: contents.split("\n").map((line) => {
                 return {
@@ -555,7 +555,7 @@ const usePrinter = () => {
         printCdSuccess,
         printLsSuccess,
         printLsFail,
-        printCatCommand,
+        printCatSuccess,
         printCatFail,
         printBlank,
     }
