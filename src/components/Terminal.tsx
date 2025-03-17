@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useContext } from "react"
 import { PrinterOptions, Block } from "../models"
 import "../styles/Terminal.css"
 import { usePrintOptions, useHistory, useFileSystem } from "../hooks"
 import { getColor } from "../helpers/colors"
+import MarkdownContext from "../contexts/MarkdownContext"
 
 interface PrinterProps {
     refresh: number
@@ -53,6 +54,7 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     const bottomRef = useRef<HTMLDivElement>(null)
     const ref = useRef<HTMLSpanElement>(null)
     const lines = usePrintOptions(options, setLoading)
+    const [markdown, setMarkdown, justClosedMarkdown, setJustClosedMarkdown] = useContext(MarkdownContext)
 
     const handleSubmit = (e: React.KeyboardEvent<HTMLTextAreaElement>, ref: React.RefObject<HTMLTextAreaElement>) => {
         e.preventDefault()
@@ -61,7 +63,7 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
             const trimmedInput = input.trim()
             push(trimmedInput)
             let newOptions = [...options]
-            if (trimmedInput === "clear") {
+            if (trimmedInput.split(" ")[0] === "clear") {
                 newOptions = [printCommandPrompt()]
             } else {
                 const queryOptions = printQuery(input)
@@ -69,9 +71,12 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                 queryOptions.options.forEach(opt => {
                     newOptions[options.length - 1].options.push(opt)
                 })
-                queryResult.forEach(opt => {
+                queryResult.blocks.forEach(opt => {
                     newOptions.push(opt)
                 })
+                if (queryResult.markdown) {
+                    setMarkdown(queryResult.markdown)
+                }
             }
             setOptions(newOptions)
             ref.current.value = ""
@@ -130,7 +135,8 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                                     id="input"
                                     ref={inputRef}
                                     spellCheck="false"
-                                    className="font-ubuntu-mono absolute top-0 left-0 h-[20px] text-opacity-0 pointer-events-none bg-transparent resize-none inline text-terminal-size caret-transparent text-terminal-white outline-none"
+                                    className="font-ubuntu-mono absolute top-0 left-0 h-[20px] text-opacity-0 pointer-events-none bg-transparent 
+                                          resize-none inline text-terminal-size caret-transparent text-terminal-white outline-none"
                                 ></textarea>
                                 <span
                                     ref={ref}
@@ -153,8 +159,9 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                                 ></div>
                             ) : null}
                         </>
-                    ) : null}
-                </div>
+                    ) : null
+                    }
+                </div >
             )
         } else {
             return block.map((opt, index) => {
@@ -168,6 +175,12 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     }
 
     const handleInput = (e: any) => {
+        if (markdown !== null || justClosedMarkdown === true) {
+            setJustClosedMarkdown(false)
+            e.preventDefault()
+            e.target.value = ""
+            return
+        }
         if (e.nativeEvent.inputType === "deleteContentForward" && cursorOffset > 0) {
             setCursorOffset(prev => prev - 1)
         } else if (e.nativeEvent.inputType === "deleteWordForward" && cursorOffset > 0) {

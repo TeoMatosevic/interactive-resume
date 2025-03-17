@@ -529,6 +529,19 @@ const usePrinter = () => {
         return [block, printPrompt(currPath)]
     }
 
+    const printBlank = (currPath: string): Block[] => {
+        const block: Block = {
+            options: [
+                {
+                    color: Color.WHITE,
+                    text: "",
+                },
+            ],
+            async: true,
+        }
+        return [block, printPrompt(currPath)]
+    }
+
     return {
         printPrompt,
         printQuery,
@@ -544,6 +557,7 @@ const usePrinter = () => {
         printLsFail,
         printCatCommand,
         printCatFail,
+        printBlank,
     }
 }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { usePrinter } from "."
-import { Block, ListNode, NodeType, Repository } from "../models"
+import { Block, ListNode, NodeType, QueryResult, Repository } from "../models"
 
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -72,10 +72,13 @@ const useFileSystem = () => {
         printLsSuccess,
         printCatCommand,
         printCatFail,
+        printBlank,
     } = usePrinter()
     const [fileSystem, setFileSystem] = useState<Node>(initFileSystem())
     const [currentNode, setCurrentNode] = useState<Node>(fileSystem.children[0].children[0])
     const [loading, setLoading] = useState<boolean>(true)
+    const [markdown, setMarkdown] = useState<string | null>(null)
+    const [justClosedMarkdown, setJustClosedMarkdown] = useState<boolean>(false)
 
     const parseToRepository = (data: any): Repository => {
         return {
@@ -86,6 +89,13 @@ const useFileSystem = () => {
             readme: data.readme,
             languages: data.languages,
             last_updated: new Date(data.last_update).toLocaleString(),
+        }
+    }
+
+    const toQueryResult = (blocks: Block[], markdown: string | null): QueryResult => {
+        return {
+            blocks: blocks,
+            markdown: markdown,
         }
     }
 
@@ -121,8 +131,7 @@ const useFileSystem = () => {
         return {
             name: "about.txt",
             children: [],
-            type: NodeType.File,
-            contents: content,
+            type: NodeType.File, contents: content,
         }
     }
 
@@ -325,29 +334,29 @@ const useFileSystem = () => {
         })
     }
 
-    const query = (query: string, history: string[]): Block[] => {
-        if (query === "help") {
-            return printHelpCommand(getPath(currentNode))
-        } else if (query === "whoami") {
-            return printWhoAmICommand(getPath(currentNode))
-        } else if (query === "whois") {
-            return printWhoIsCommand(getPath(currentNode))
-        } else if (query === "history") {
-            return printHistoryCommand(history, getPath(currentNode))
+    const query = (query: string, history: string[]): QueryResult => {
+        if (query.split(" ")[0] === "help") {
+            return toQueryResult(printHelpCommand(getPath(currentNode)), null)
+        } else if (query.split(" ")[0] === "whoami") {
+            return toQueryResult(printWhoAmICommand(getPath(currentNode)), null)
+        } else if (query.split(" ")[0] === "whois") {
+            return toQueryResult(printWhoIsCommand(getPath(currentNode)), null)
+        } else if (query.split(" ")[0] === "history") {
+            return toQueryResult(printHistoryCommand(history, getPath(currentNode)), null)
         } else if (query.split(" ")[0] === "cd") {
             const name = query.split(" ")[1]
             const status = cd(name)
             if (status.success) {
-                return printCdSuccess(status.path!)
+                return toQueryResult(printCdSuccess(status.path!), null)
             } else {
-                return printCdFail(status.message, getPath(currentNode))
+                return toQueryResult(printCdFail(status.message, getPath(currentNode)), null)
             }
         } else if (query.split(" ")[0] === "cat") {
             const file = query.split(" ")[1]
-            return printFile(file)
+            return toQueryResult(printFile(file), null)
         } else if (query.split(" ")[0] === "ls") {
             if (query.split(" ").length === 1) {
-                return printLsSuccess(list(currentNode), getPath(currentNode))
+                return toQueryResult(printLsSuccess(list(currentNode), getPath(currentNode)), null)
             } else {
                 const path = query.split(" ")[1]
                 const paths = path.split("/")
@@ -355,14 +364,26 @@ const useFileSystem = () => {
                 for (const p of paths) {
                     const node = changeDirectory(p, nodeToList, ChangeDirectoryCommand.LS)
                     if (!node.success) {
-                        return printLsFail(node.message, getPath(currentNode))
+                        return toQueryResult(printLsFail(node.message, getPath(currentNode)), null)
                     }
                     nodeToList = node.node!
                 }
-                return printLsSuccess(list(nodeToList), getPath(currentNode))
+                return toQueryResult(printLsSuccess(list(nodeToList), getPath(currentNode)), null)
             }
+        } else if (query.split(" ")[0] === "read") {
+            const file = query.split(" ")[1]
+            const paths = file.split("/")
+            let nodeToRead = currentNode
+            for (const p of paths) {
+                const node = changeDirectory(p, nodeToRead, ChangeDirectoryCommand.LS)
+                if (!node.success) {
+                    return toQueryResult(printCatFail(node.message, getPath(currentNode)), null)
+                }
+                nodeToRead = node.node!
+            }
+            return toQueryResult(printBlank(getPath(currentNode)), nodeToRead.contents)
         } else {
-            return printCommandNotFound(query, getPath(currentNode))
+            return toQueryResult(printCommandNotFound(query, getPath(currentNode)), null)
         }
     }
 
@@ -393,7 +414,7 @@ const useFileSystem = () => {
         addProjects()
     }, [])
 
-    return { query, printCommandPrompt, printQuery, printInit, addProjects, loading }
+    return { query, printCommandPrompt, printQuery, printInit, addProjects, loading, markdown, setMarkdown, justClosedMarkdown, setJustClosedMarkdown }
 }
 
 export default useFileSystem
