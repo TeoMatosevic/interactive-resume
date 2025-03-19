@@ -22,6 +22,7 @@ const usePrinter = () => {
                 {
                     color: Color.WHITE,
                     text: "$ ",
+                    className: "font-bold",
                 },
             ],
             async: false,
@@ -49,99 +50,92 @@ const usePrinter = () => {
                 options: [
                     {
                         color: Color.WHITE,
+                        text: `
+  ______   ______     ______        __`,
+                        className: "font-bold",
+                    },
+                    {
+                        color: Color.WHITE,
                         text: `\
-                        _nnnn_`,
+    __     ______     ______   ______     ______`,
+                        className: "font-bold",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: `\
+     ______     __   __   __     ______ `,
                         className: "font-bold",
                     },
                     {
                         color: Color.WHITE,
                         text: `
-                        dGGGGMMb`,
+ /\\__  _\\ /\\  ___\\   /\\  __ \\      /\\ "-./  \\`,
+                        className: "font-bold",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: `\
+   /\\  __ \\   /\\__  _\\ /\\  __ \\   /\\  ___\\   /\\  ___\\`,
+                        className: "font-bold",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: `\
+   /\\ \\ / /  /\\ \\   /\\  ___\\  `,
                         className: "font-bold",
                     },
                     {
                         color: Color.WHITE,
                         text: `
-                       @p~qp~~qMb`,
+ \\/_/\\ \\/ \\ \\  __\\   \\ \\ \\/\\ \\     \\ \\ \\-./\\`,
+                        className: "font-bold",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: `\
+ \\  \\ \\  __ \\  \\/_/\\ \\/ \\ \\ \\/\\ \\  \\ \\___  \\`,
+                        className: "font-bold",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: `\
+  \\ \\  __\\   \\ \\ \\'/   \\ \\ \\  \\ \\ \\____ `,
                         className: "font-bold",
                     },
                     {
                         color: Color.WHITE,
                         text: `
-                       M|@||@) M|`,
+    \\ \\_\\  \\ \\_____\\  \\ \\_____\\     \\ \\_\\ \\`,
+                        className: "font-bold",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: `\
+ \\_\\  \\ \\_\\ \\_\\    \\ \\_\\  \\ \\_____\\  \\/\\_____\\`,
+                        className: "font-bold",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: `\
+  \\ \\_____\\  \\ \\__|    \\ \\_\\  \\ \\_____\\ `,
                         className: "font-bold",
                     },
                     {
                         color: Color.WHITE,
                         text: `
-                       @,----.JM|`,
+     \\/_/   \\/_____/   \\/_____/`,
                         className: "font-bold",
                     },
                     {
                         color: Color.WHITE,
-                        text: `
-                      JS^\\__/  qKL`,
+                        text: `\
+      \\/_/  \\/_/   \\/_/\\/_/     \\/_/   \\/_____/`,
                         className: "font-bold",
                     },
                     {
                         color: Color.WHITE,
-                        text: `
-                     dZP        qKRb`,
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: `
-                    dZP          qKKb`,
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: `
-                   fZP            SMMb`,
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: `
-                   HZM            MMMM`,
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: `
-                   FqM            MMMM`,
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: `
-                 __| ".        |\\dS"qML`,
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: `
-                 |    \`.       | \`' \\Zq`,
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: `
-                _)      \\.___.,|     .'`,
-                        className: "font-bold",
-                    },
-
-                    {
-                        color: Color.WHITE,
-                        text: `
-                \\____   )MMMMMP|   .'`,
-                        className: "font-bold",
-                    },
-                    {
-                        color: Color.WHITE,
-                        text: `
-                     \`-'       \`--' \n`,
+                        text: `\
+   \\/_____/   \\/_____/   \\/_/      \\/_/   \\/_____/ \n`,
                         className: "font-bold",
                     },
                 ],
@@ -151,17 +145,54 @@ const usePrinter = () => {
                 options: [
                     {
                         color: Color.WHITE,
+                        text: "\nHello!",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: " Welcome to my personal website.\n",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: "This is a terminal emulator that you",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: " can use to navigate through my personal",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: " projects and learn more about me.\n",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: "If nothing appears when you type, ",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: "click anywhere on the page to focus the terminal.\n",
+                    },
+                    {
+                        color: Color.WHITE,
                         text: "For information about available commands type ",
                     },
                     {
+                        color: Color.WHITE,
+                        text: "'",
+                        className: "font-bold",
+                    },
+                    {
                         color: Color.PURPLE,
-                        text: "'help'",
-                        className: "text-shadow-purple font-bold",
+                        text: "help",
+                        className: "font-bold",
+                    },
+                    {
+                        color: Color.WHITE,
+                        text: "'",
+                        className: "font-bold",
                     },
                     {
                         color: Color.WHITE,
                         text: ".\n",
-                        className: "font-bold",
                     },
                 ],
                 async: false,
@@ -176,184 +207,273 @@ const usePrinter = () => {
         const block: Block = {
             options: [
                 {
-                    color: Color.PURPLE,
-                    text: `
-    'help'`,
-                    className: "font-bold text-shadow-purple",
-                },
-                {
                     color: Color.WHITE,
-                    text: `       - you already know what this does`,
-                },
-                {
-                    color: Color.YELLOW_LIGHT,
-                    text: ` (`,
-                    className: "font-bold text-shadow-yellow",
-                },
-                {
-                    color: Color.BLUE,
-                    text: `⚈`,
-                    className: "font-bold text-shadow-blue",
-                },
-                {
-                    color: Color.YELLOW_LIGHT,
-                    text: `╭`,
-                    className: "font-bold text-shadow-yellow",
-                },
-                {
-                    color: Color.BLUE_LIGHT,
-                    text: `⚈`,
-                    className: "font-bold text-shadow-blue",
-                },
-                {
-                    color: Color.YELLOW_LIGHT,
-                    text: `)\n`,
-                    className: "font-bold text-shadow-yellow",
+                    text: `\n`,
                 },
                 {
                     color: Color.PURPLE,
                     text: `\
-    'whoami'`,
+    cat`,
                     className: "font-bold text-shadow-purple",
                 },
                 {
                     color: Color.WHITE,
-                    text: `     - who `,
+                    text: `        - Prints file contents (available files can be listed with `,
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "ls",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: " command), for example ",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "cat about.txt",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `.\n                 Files are `,
+                },
+                {
+                    color: Color.WHITE,
+                    text: "white",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: ".\n",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
+    cd`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `         - Change the current directory (available directories can be listed with `,
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "ls",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: " command), for example ",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "cd Projects",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: ".\n",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `                 Directories are `,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "purple",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: ".\n",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
+    clear`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `      - Clear the terminal.\n`,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
+    help`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `       - You already know what this does.\n`,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
+    history`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `    - Show command history.\n`,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
+    ls`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `         - List directory contents.\n`,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
+    read`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `       - Displays markdown files (available files can be listed with `,
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "ls",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: " command), for example ",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "read README.md",
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `.\n                 Markdown files are `,
+                },
+                {
+                    color: Color.WHITE,
+                    text: "white",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: " and end with ",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'.md'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: ".\n",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
+    whoami`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `     - Who `,
                 },
                 {
                     color: Color.WHITE,
                     text: `are`,
-                    className: "font-bold text-shadow-yellow",
+                    className: "font-bold text-shadow-white",
                 },
                 {
                     color: Color.WHITE,
-                    text: ` you\n`,
+                    text: ` you.\n`,
                 },
                 {
                     color: Color.PURPLE,
                     text: `\
-    'whois'`,
+    whois`,
                     className: "font-bold text-shadow-purple",
                 },
                 {
                     color: Color.WHITE,
-                    text: `      - who `,
+                    text: `      - Who `,
                 },
                 {
                     color: Color.WHITE,
                     text: `is`,
-                    className: "font-bold text-shadow-yellow",
+                    className: "font-bold text-shadow-white",
                 },
                 {
                     color: Color.WHITE,
-                    text: ` Teo Matošević\n`,
+                    text: ` Teo Matošević.\n`,
                 },
                 {
                     color: Color.PURPLE,
-                    text: `\
-    'clear'`,
-                    className: "font-bold text-shadow-purple",
-                },
-                {
-                    color: Color.WHITE,
-                    text: `      - clear the terminal\n`,
-                },
-                {
-                    color: Color.PURPLE,
-                    text: `\
-    'history'`,
-                    className: "font-bold text-shadow-purple",
-                },
-                {
-                    color: Color.WHITE,
-                    text: `    - show command history\n`,
-                },
-                {
-                    color: Color.PURPLE,
-                    text: `\
-    'cd'`,
-                    className: "font-bold text-shadow-purple",
-                },
-                {
-                    color: Color.WHITE,
-                    text: `         - change directory (available directories can be listed with `,
-                },
-                {
-                    color: Color.PURPLE,
-                    text: "'ls'",
-                    className: "font-bold text-shadow-purple",
-                },
-                {
-                    color: Color.WHITE,
-                    text: " command), for example ",
-                },
-                {
-                    color: Color.PURPLE,
-                    text: "'cd Projects'",
-                    className: "font-bold text-shadow-purple",
-                },
-                {
-                    color: Color.WHITE,
-                    text: ",\n",
-                },
-                {
-                    color: Color.WHITE,
-                    text: `                   directories are `,
-                },
-                {
-                    color: Color.PURPLE,
-                    text: "purple\n",
-                    className: "font-bold",
-                },
-                {
-                    color: Color.PURPLE,
-                    text: `\
-    'ls'`,
-                    className: "font-bold text-shadow-purple",
-                },
-                {
-                    color: Color.WHITE,
-                    text: `         - list directory contents\n`,
-                },
-                {
-                    color: Color.PURPLE,
-                    text: `\
-    'cat'`,
-                    className: "font-bold text-shadow-purple",
-                },
-                {
-                    color: Color.WHITE,
-                    text: `        - prints file contents (available files can be listed with `,
-                },
-                {
-                    color: Color.PURPLE,
-                    text: "'ls'",
-                    className: "font-bold text-shadow-purple",
-                },
-                {
-                    color: Color.WHITE,
-                    text: " command), for example ",
-                },
-                {
-                    color: Color.PURPLE,
-                    text: "'cat about.txt'",
-                    className: "font-bold text-shadow-purple",
-                },
-                {
-                    color: Color.WHITE,
-                    text: ",\n",
-                },
-                {
-                    color: Color.WHITE,
-                    text: `                   files are `,
-                },
-                {
-                    color: Color.WHITE,
-                    text: "white\n",
-                    className: "font-bold",
-                },
-                {
-                    color: Color.WHITE,
                     text: `\n`,
                 },
             ],
@@ -372,7 +492,7 @@ const usePrinter = () => {
                 {
                     color: Color.PURPLE,
                     text: query,
-                    className: "text-shadow-purple font-bold",
+                    className: "font-bold",
                 },
                 {
                     color: Color.WHITE,
@@ -383,13 +503,19 @@ const usePrinter = () => {
                     text: "For information about available commands type ",
                 },
                 {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
                     color: Color.PURPLE,
-                    text: "'help'",
-                    className: "text-shadow-purple font-bold",
+                    text: "help",
+                    className: "font-bold",
                 },
                 {
                     color: Color.WHITE,
-                    text: ".\n",
+                    text: "'.\n",
+                    className: "font-bold",
                 },
             ],
             async: true,
@@ -401,8 +527,31 @@ const usePrinter = () => {
         const block: Block = {
             options: [
                 {
-                    color: Color.RED,
-                    text: "You are not a special snowflake.\n",
+                    color: Color.BLUE,
+                    text: "“Be who you are and say what you feel, ",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "because those who mind don’t matter,",
+                },
+                {
+                    color: Color.BLUE,
+                    text: " and those who matter don’t mind.”",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: " - Bernard",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: " M.",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: " Baruch\n",
                 },
             ],
             async: true,
@@ -414,8 +563,92 @@ const usePrinter = () => {
         const block: Block = {
             options: [
                 {
-                    color: Color.RED,
-                    text: "Teo Matošević is a software developer.\n",
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: "Teo Matošević ",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "is a software developer.\n",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "He is ",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: "passionate ",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "about tech, coding and learning new things.\n",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "This website is a showcase of his ",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: "skills",
+                },
+                {
+                    color: Color.BLUE,
+                    text: " and ",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: "projects.\n",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "In his ",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: "free time",
+                },
+                {
+                    color: Color.BLUE,
+                    text: ", he enjoys spending time with his family and friends.\n",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "He ",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: "enyojs ",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "playing video games and watching sports, especially football.\n",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "Feel free to ",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: "explore ",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "and ",
+                },
+                {
+                    color: Color.BLUE,
+                    className: "font-bold",
+                    text: "learn ",
+                },
+                {
+                    color: Color.BLUE,
+                    text: "more about him.\n",
                 },
             ],
             async: true,
@@ -477,12 +710,12 @@ const usePrinter = () => {
         return [block, printPrompt(currPath)]
     }
 
-    const printCdFail = (message: string, currPath: string): Block[] => {
+    const printCdSuccess = (currPath: string): Block[] => {
         const block: Block = {
             options: [
                 {
-                    color: Color.RED,
-                    text: message + "\n",
+                    color: Color.WHITE,
+                    text: ``,
                 },
             ],
             async: true,
@@ -490,12 +723,12 @@ const usePrinter = () => {
         return [block, printPrompt(currPath)]
     }
 
-    const printCdSuccess = (currPath: string): Block[] => {
+    const printCdFail = (message: string, currPath: string): Block[] => {
         const block: Block = {
             options: [
                 {
-                    color: Color.WHITE,
-                    text: ``,
+                    color: Color.RED,
+                    text: message + "\n",
                 },
             ],
             async: true,
