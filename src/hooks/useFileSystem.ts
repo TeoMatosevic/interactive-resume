@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { usePrinter } from "."
 import { Block, ListNode, NodeType, QueryResult, Repository } from "../models"
+import { cv_md, cv_txt, user_manual_txt } from "../helpers/file_contents"
 
 const apiUrl = import.meta.env.VITE_API_URL
 
@@ -39,13 +40,22 @@ const initFileSystem = (): Node => {
                             type: NodeType.Folder,
                         },
                         {
-                            name: "about.txt",
+                            name: "CV.txt",
                             children: [],
                             type: NodeType.File,
-                            contents: `\
-This is a project created by Teo Matošević.
-Its purpose is to showcase my skills and knowledge.
-I hope you like it!`,
+                            contents: cv_txt,
+                        },
+                        {
+                            name: "CV.md",
+                            children: [],
+                            type: NodeType.File,
+                            contents: cv_md,
+                        },
+                        {
+                            name: "user_manual.txt",
+                            children: [],
+                            type: NodeType.File,
+                            contents: user_manual_txt,
                         },
                     ],
                     type: NodeType.Folder,
@@ -344,7 +354,7 @@ const useFileSystem = () => {
                 message: `tmatosevic: read: ${name}: Is a directory`,
             }
         }
-        if (!currentNode.name.endsWith(".md")) {
+        if (!currNode.name.endsWith(".md")) {
             return {
                 success: false,
                 message: `tmatosevic: read: ${name}: Not a markdown file`,

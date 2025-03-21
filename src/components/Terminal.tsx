@@ -282,6 +282,12 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
     }, [options, inputRef.current, refresh])
 
     useEffect(() => {
+        if (markdown === null) {
+            inputRef.current?.focus()
+        }
+    }, [markdown])
+
+    useEffect(() => {
         if (loading === false && inputRef.current) {
             inputRef.current.focus()
         }

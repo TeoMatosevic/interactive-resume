@@ -18,6 +18,9 @@ const App = () => {
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (markdown === null) {
+                return
+            }
             if (e.key === "q") {
                 setMarkdown(null)
                 setJustClosedMarkdown(true)
@@ -30,7 +33,7 @@ const App = () => {
         return () => {
             document.removeEventListener("keydown", handleKeyDown)
         }
-    }, [])
+    }, [markdown])
 
     return (
         <MarkdownContext.Provider value={[markdown, setMarkdown, justClosedMarkdown, setJustClosedMarkdown]}>
@@ -46,7 +49,7 @@ const App = () => {
                 }
                 {markdown !== null &&
                     <div
-                        className="absolute top-[5%] left-[5%] w-[90%] h-[90%] overflow-scroll z-50 border-8 border-terminal-gray-light rounded-2xl bg-terminal-white"
+                        className="fixed top-[5%] left-[5%] w-[90%] h-[90%] overflow-scroll z-50 border-8 border-terminal-gray-light rounded-2xl bg-terminal-white"
                         ref={ref}
                     >
                         <div className="relative">
