@@ -49,7 +49,7 @@ const App = () => {
                 }
                 {markdown !== null &&
                     <div
-                        className="fixed top-[5%] left-[5%] w-[90%] h-[90%] overflow-scroll z-50 border-8 border-terminal-gray-light rounded-2xl bg-terminal-white"
+                        className="fixed top-[5%] left-[5%] w-[90%] h-[90%] overflow-scroll z-50 border-8 border-terminal-gray-light rounded-2xl bg-terminal-white scrollbar-none"
                         ref={ref}
                     >
                         <div className="relative">
@@ -75,7 +75,7 @@ const App = () => {
                                 </ReactMarkdown>
                             </div>
                             <div className="absolute top-0 right-0 p-2 pr-4 text-terminal-black font-ubuntu-mono text-2xl">
-                                Press 'Q' to exit
+                                Press 'q' to exit
                             </div>
                         </div>
                     </div>

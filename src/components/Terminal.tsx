@@ -135,9 +135,9 @@ const Terminal: React.FC<PrinterProps> = ({ refresh }) => {
                                     id="input"
                                     ref={inputRef}
                                     spellCheck="false"
-                                    className="font-ubuntu-mono absolute top-0 left-0 h-[20px] text-opacity-0 pointer-events-none bg-transparent 
-                                          resize-none inline text-terminal-size caret-transparent text-terminal-white outline-none border-transparent
-                                          hover:border-transparent focus:border-transparent focus:ring-0 hover:ring-0 hover:outline-none focus:outline-none"
+                                    className="font-ubuntu-mono absolute top-0 left-0 h-[20px] text-opacity-0 pointer-events-none bg-transparent resize-none 
+                                    inline text-terminal-size caret-transparent text-terminal-white outline-none border-transparent hover:border-transparent 
+                                    focus:border-transparent focus:ring-0 hover:ring-0 hover:outline-none focus:outline-none scrollbar-none"
                                 ></textarea>
                                 <span
                                     ref={ref}
