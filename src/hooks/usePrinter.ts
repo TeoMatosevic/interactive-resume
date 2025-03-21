@@ -431,10 +431,6 @@ const usePrinter = () => {
                     className: "font-bold",
                 },
                 {
-                    color: Color.WHITE,
-                    text: ".\n",
-                },
-                {
                     color: Color.PURPLE,
                     text: `\
     whoami`,
@@ -471,6 +467,29 @@ const usePrinter = () => {
                 {
                     color: Color.WHITE,
                     text: ` Teo Matošević.\n`,
+                },
+                {
+                    color: Color.WHITE,
+                    text: `\nBest way to start using this terminal is to type `,
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.PURPLE,
+                    text: "cat user_manual.txt",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: "'",
+                    className: "font-bold",
+                },
+                {
+                    color: Color.WHITE,
+                    text: " and follow the instructions.\n",
                 },
                 {
                     color: Color.PURPLE,
