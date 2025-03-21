@@ -431,6 +431,10 @@ const usePrinter = () => {
                     className: "font-bold",
                 },
                 {
+                    color: Color.WHITE,
+                    text: ".\n",
+                },
+                {
                     color: Color.PURPLE,
                     text: `\
     whoami`,
