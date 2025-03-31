@@ -213,6 +213,16 @@ const usePrinter = () => {
                 {
                     color: Color.PURPLE,
                     text: `\
+    banner`,
+                    className: "font-bold text-shadow-purple",
+                },
+                {
+                    color: Color.WHITE,
+                    text: `     - Prints the banner.\n`,
+                },
+                {
+                    color: Color.PURPLE,
+                    text: `\
     cat`,
                     className: "font-bold text-shadow-purple",
                 },

@@ -128,7 +128,47 @@ Kubernetes, RabbitMQ, SQLite, PostgreSQL, MySQL, MongoDB Triggers, Git, GitHub, 
 actions, Jira, Confluence, Render, CI/CD, Vim, Linux...
 `;
 
-const user_manual_txt = "user_manual.txt";
+const user_manual_txt = `\
+User Manual
+
+This is a user manual for the terminal emulator web application. The application is designed to
+simulate a terminal environment. The user can interact with the terminal by typing commands and
+receiving output. The application supports various commands. The user can navigate the file system as 
+he would in a real unix terminal.
+
+For novice users, short explanation of how to navigate the file system is provided below.
+
+Commands:
+- ls: list directory contents
+- cd: change directory
+- cat: concatenate files and print on the standard output
+- clear: clear the terminal screen
+- help: display help information
+- read: display markdown files (not standard unix command but added for the purpose of this application)
+
+Navigation:
+- To list the contents of the current directory, type ls and press Enter.
+- To change to a different directory, type cd followed by the directory name and press Enter.
+- To display the contents of a file, type cat followed by the file name and press Enter.
+- To clear the terminal screen, type clear and press Enter.
+- Directory names are case-sensitive. Make sure to type the directory name exactly as it appears.
+- To go back to the previous directory, type cd .. and press Enter. (.. is a special directory name that represents the parent directory)
+- To move multiple directories in the same command, separate the directory names with a forward slash (/). 
+  For example, cd directory1/directory2 will move to directory2 inside directory1.
+- It is very important to be in the correct directory when executing commands.
+
+For more information, type help and press Enter.
+
+Most of the content of this application is inside the Projects/github-projects directory.
+All of my public projects are there. Feel free to explore them. Use the cat command to view the content of the files.
+Use the read command to view markdown files (README.md most notably).
+
+My CV is located in the root directory. Use cat and read commands to view it (CV.txt and CV.md).
+
+Feel free to explore the application and have fun!
+
+For more information contact me. :)
+`;
 
 export {
     cv_txt,

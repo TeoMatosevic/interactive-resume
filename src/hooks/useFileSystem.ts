@@ -439,6 +439,8 @@ const useFileSystem = () => {
     const query = (query: string, history: string[]): QueryResult => {
         if (query.split(" ")[0] === "help") {
             return toQueryResult(printHelpCommand(getPath(currentNode)), null)
+        } else if (query.split(" ")[0] === "banner") {
+            return toQueryResult(printStartUp(getPath(currentNode)), null)
         } else if (query.split(" ")[0] === "whoami") {
             return toQueryResult(printWhoAmICommand(getPath(currentNode)), null)
         } else if (query.split(" ")[0] === "whois") {
