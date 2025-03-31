@@ -11,9 +11,7 @@ Go to [teomatosevic.com](https://teomatosevic.com) and type insert the "help" co
 
 Welcome to my portfolio! This interactive site showcases my projects, skills, and experiences in a dynamic and engaging way.
 
-<p align="center">
-  <img src="https://s6.gifyu.com/images/bzoUl.gif" />
-</p>
+![demo](https://s6.gifyu.com/images/bzoUl.gif)
 
 ## Table of Contents
 
@@ -52,13 +50,13 @@ Make sure you have the following installed:
 
 1.  Clone the repository:
 
-    ```
+    ```bash
     git clone https://github.com/TeoMatosevic/interactive-resume.git
     cd interactive-resume
     ```
 2.  Install the dependencies using npm or Yarn:
 
-    ```
+    ```bash
     npm install
     # or
     yarn install
@@ -68,7 +66,7 @@ Make sure you have the following installed:
 
 1.  Start the development server:
 
-    ```
+    ```bash
     npm run dev
     # or
     yarn dev
