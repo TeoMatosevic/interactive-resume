@@ -22,7 +22,6 @@ Welcome to my portfolio! This interactive site showcases my projects, skills, an
   - [Installation](#installation)
   - [Running the Application](#running-the-application)
 - [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
 
